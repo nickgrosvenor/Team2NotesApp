@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MasterTableViewController: UITableViewController {
+class MasterTableViewController: UITableViewController, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +18,31 @@ class MasterTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+    }
+    
+    
+    // the code below here is for the Parse login, everytime the view appears the code will check to see if there's a user. if there in no user it's gonna create a login and signup view controller, if there is it's gonna bypass all that. 
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if (PFUser.currentUser() == nil){
+            
+            var logInViewController = PFLogInViewController()
+            
+            logInViewController.delegate = self
+            
+            var signUpViewController = PFSignUpViewController()
+            
+            signUpViewController.delegate = self
+            
+            logInViewController.signUpController = signUpViewController
+            
+            self.presentViewController(logInViewController, animated: true, completion: nil)
+            
+        }
+        
+        
     }
 
     override func didReceiveMemoryWarning() {

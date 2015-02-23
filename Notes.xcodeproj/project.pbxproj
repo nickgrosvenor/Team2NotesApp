@@ -31,6 +31,8 @@
 		015AA20B1A96C78400479A7F /* MasterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015AA20A1A96C78400479A7F /* MasterTableViewController.swift */; };
 		015AA20D1A96C7B700479A7F /* MasterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015AA20C1A96C7B700479A7F /* MasterTableViewCell.swift */; };
 		015AA20F1A96C89A00479A7F /* AddNoteTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015AA20E1A96C89A00479A7F /* AddNoteTableViewController.swift */; };
+		015AA23F1A9BC1C600479A7F /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015AA23E1A9BC1C600479A7F /* Accounts.framework */; };
+		015AA2411A9BC1CD00479A7F /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015AA2401A9BC1CD00479A7F /* Social.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +75,8 @@
 		015AA20A1A96C78400479A7F /* MasterTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MasterTableViewController.swift; path = ../MasterTableViewController.swift; sourceTree = "<group>"; };
 		015AA20C1A96C7B700479A7F /* MasterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCell.swift; sourceTree = "<group>"; };
 		015AA20E1A96C89A00479A7F /* AddNoteTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNoteTableViewController.swift; sourceTree = "<group>"; };
+		015AA23E1A9BC1C600479A7F /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		015AA2401A9BC1CD00479A7F /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				015AA2411A9BC1CD00479A7F /* Social.framework in Frameworks */,
+				015AA23F1A9BC1C600479A7F /* Accounts.framework in Frameworks */,
 				015AA2081A96BFE600479A7F /* libsqlite3.dylib in Frameworks */,
 				015AA2061A96BFD300479A7F /* libz.dylib in Frameworks */,
 				015AA2041A96BFC600479A7F /* SystemConfiguration.framework in Frameworks */,
@@ -112,6 +118,8 @@
 		015AA1BB1A96BDAB00479A7F = {
 			isa = PBXGroup;
 			children = (
+				015AA2401A9BC1CD00479A7F /* Social.framework */,
+				015AA23E1A9BC1C600479A7F /* Accounts.framework */,
 				015AA2071A96BFE600479A7F /* libsqlite3.dylib */,
 				015AA2051A96BFD300479A7F /* libz.dylib */,
 				015AA2031A96BFC600479A7F /* SystemConfiguration.framework */,
