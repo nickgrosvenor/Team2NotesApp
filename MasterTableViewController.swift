@@ -41,8 +41,54 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
             self.presentViewController(logInViewController, animated: true, completion: nil)
             
         }
+    }
+    
+    
+    func logInViewController(logInController: PFLogInViewController!, shouldBeginLogInWithUsername username: String!, password: String!) -> Bool {
         
+        if (!username.isEmpty || !password.isEmpty) {
         
+            return true
+        
+        } else {
+        
+            return false
+        }
+        
+    }
+    
+    func logInViewController(logInController: PFLogInViewController!, didLogInUser user: PFUser!) {
+        
+        self.dismissViewControllerAnimated(true, completion: nil)
+        
+    }
+    
+    func logInViewController(logInController: PFLogInViewController!, didFailToLogInWithError error: NSError!) {
+    
+        println("Failed to login")
+    }
+    
+    func signUpViewController(signUpController: PFSignUpViewController!, shouldBeginSignUp info: [NSObject : AnyObject]!) -> Bool {
+        
+        if let password = info?["password"] as? String{
+        
+            return password.utf16Count >= 5
+        } else {
+        
+            return false
+        }
+    }
+    
+    func signUpViewController(signUpController: PFSignUpViewController!, didSignUpUser user: PFUser!) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func signUpViewController(signUpController: PFSignUpViewController!, didFailToSignUpWithError error: NSError!) {
+        println("Failed to sign up")
+    }
+    
+    func signUpViewControllerDidCancelSignUp(signUpController: PFSignUpViewController!) {
+        println("User dismissed signup")
     }
 
     override func didReceiveMemoryWarning() {
