@@ -9,6 +9,10 @@
 import UIKit
 
 class MasterTableViewController: UITableViewController, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate {
+    
+    var noteObjects: NSMutableArray! = NSMutableArray()
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,9 +44,67 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
             
             self.presentViewController(logInViewController, animated: true, completion: nil)
             
+        } else {
+            
+            self.fetchAllObjectsFromLocalDataStore()
+            self.fetchAllObjects()
         }
     }
     
+    func fetchAllObjectsFromLocalDataStore(){
+        
+        var query: PFQuery = PFQuery(className: "Note")
+        query.fromLocalDatastore()
+        
+        query.whereKey("username", equalTo: PFUser.currentUser().username)
+        
+        query.findObjectsInBackgroundWithBlock{ (objects, error) -> Void in
+            
+            if (error == nil){
+                var temp: NSArray = objects as NSArray
+                
+                self.noteObjects = temp.mutableCopy() as NSMutableArray
+                self.tableView.reloadData()
+            } else {
+                println(error.userInfo)
+            }
+        
+        }
+    
+    }
+    
+    func fetchAllObjects(){
+        
+        PFObject.unpinAllObjectsInBackgroundWithBlock(nil)
+        
+        var query: PFQuery = PFQuery(className: "Note")
+        
+        query.whereKey("username", equalTo: PFUser.currentUser().username)
+        
+        query.findObjectsInBackgroundWithBlock {(objects, error) -> Void in
+            
+            if (error == nil){
+            
+                PFObject.pinAllInBackground(objects, block: nil)
+                
+                self.fetchAllObjectsFromLocalDataStore()
+            
+            } else {
+                
+                println(error.userInfo)
+            
+            }
+    
+        }
+    }
+    
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    //Parse login
     
     func logInViewController(logInController: PFLogInViewController!, shouldBeginLogInWithUsername username: String!, password: String!) -> Bool {
         
@@ -90,35 +152,58 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
     func signUpViewControllerDidCancelSignUp(signUpController: PFSignUpViewController!) {
         println("User dismissed signup")
     }
+    
+    
+    
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+
 
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Potentially incomplete method implementation.
         // Return the number of sections.
-        return 0
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return 0
+        return self.noteObjects.count
     }
 
-    /*
+
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as UITableViewCell
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as MasterTableViewCell
 
-        // Configure the cell...
-
+        var object: PFObject = self.noteObjects.objectAtIndex(indexPath.row) as PFObject
+        
+        cell.masterTitleLabel?.text = object["title"] as? String
+        cell.masterTextLabel?.text = object["text"] as? String
+        
         return cell
     }
-    */
+    
+    override func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+        self.performSegueWithIdentifier("editNote", sender: self)
+    }
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        var upcoming: AddNoteTableViewController = segue.destinationViewController as AddNoteTableViewController
+        
+        if (segue.identifier == "editNote") {
+            
+            let indexPath = self.tableView.indexPathForSelectedRow()!
+            
+            var object: PFObject = self.noteObjects.objectAtIndex(indexPath.row) as PFObject
+            
+            upcoming.object = object
+        
+            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        
+        }
+    }
 
     /*
     // Override to support conditional editing of the table view.

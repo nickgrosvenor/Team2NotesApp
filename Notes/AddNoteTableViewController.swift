@@ -14,16 +14,20 @@ class AddNoteTableViewController: UITableViewController {
     @IBOutlet weak var titleField: UITextField!
     @IBOutlet weak var textView: UITextView!
     
+    var object: PFObject!
+    
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
+        if(self.object != nil) {
+            self.titleField?.text = self.object["title"] as? String
+            self.textView?.text = self.object["text"] as? String
+        } else {
+            self.object = PFObject(className: "Note")
+        
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,6 +36,25 @@ class AddNoteTableViewController: UITableViewController {
     }
 
    
+    @IBAction func saveAction(sender: UIBarButtonItem) {
+        self.object["username"] = PFUser.currentUser().username
+        self.object["title"] = self.titleField!.text
+        self.object["text" ] = self.textView?.text
+        
+        self.object.saveEventually { (success, error) -> Void in
+            
+            if (error == nil){
+            
+            } else {
+            
+                println(error.userInfo)
+            
+            }
+        }
+        
+        self.navigationController?.popToRootViewControllerAnimated(true)
+        
+    }
 
     /*
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

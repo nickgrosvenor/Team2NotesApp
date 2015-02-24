@@ -144,7 +144,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Note" id="MBZ-sa-WWs">
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="w4q-Bd-ahP"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="w4q-Bd-ahP">
+                            <connections>
+                                <action selector="saveAction:" destination="FMr-QG-m2D" id="PpS-lv-mYy"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="textView" destination="G5f-pv-SNR" id="PzZ-fQ-Bfw"/>
