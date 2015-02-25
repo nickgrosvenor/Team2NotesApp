@@ -5,7 +5,7 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--List-->
+        <!--Master Table View Controller-->
         <scene sceneID="CKP-36-Tk9">
             <objects>
                 <tableViewController id="jgc-gh-CQ2" customClass="MasterTableViewController" customModule="Notes" customModuleProvider="target" sceneMemberID="viewController">
@@ -56,8 +56,9 @@
                             <outlet property="delegate" destination="jgc-gh-CQ2" id="u5Z-Ga-pAv"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="List" id="iKT-Io-9oG">
+                    <navigationItem key="navigationItem" id="iKT-Io-9oG">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="RRT-7u-T3x">
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <segue destination="FMr-QG-m2D" kind="show" identifier="addNote" id="Rfy-rn-a0B"/>
                             </connections>
@@ -114,8 +115,8 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vZG-VH-qQD" id="bKM-zZ-ey6">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Things I Did Today..." translatesAutoresizingMaskIntoConstraints="NO" id="G5f-pv-SNR">
-                                                    <rect key="frame" x="51" y="8" width="562" height="110"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" text="Things I Did Today..." translatesAutoresizingMaskIntoConstraints="NO" id="G5f-pv-SNR">
+                                                    <rect key="frame" x="8" y="8" width="584" height="110"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -181,4 +182,5 @@
     <inferredMetricsTieBreakers>
         <segue reference="cbL-DS-A8u"/>
     </inferredMetricsTieBreakers>
+    <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
 </document>

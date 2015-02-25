@@ -10,12 +10,22 @@ import UIKit
 
 class MasterTableViewController: UITableViewController, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate {
     
+    
     var noteObjects: NSMutableArray! = NSMutableArray()
     
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let logo = UIImage(named: "uploadistLogo")
+        let imageView = UIImageView(image:logo)
+        self.navigationItem.titleView = imageView
+        
+        
+        
+        
+  
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false

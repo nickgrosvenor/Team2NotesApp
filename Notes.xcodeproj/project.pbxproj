@@ -499,6 +499,7 @@
 				015AA1E51A96BDAB00479A7F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		015AA1E61A96BDAB00479A7F /* Build configuration list for PBXNativeTarget "NotesTests" */ = {
 			isa = XCConfigurationList;
@@ -507,6 +508,7 @@
 				015AA1E81A96BDAB00479A7F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
