@@ -284,7 +284,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
             cell.weekDayLbl.textColor = UIColor.whiteColor()
             cell.noteLabel.textColor = UIColor.whiteColor()
             
-            
+            cell.backgroundColor = UIColor.clearColor()
             return cell
         }
     }
@@ -303,6 +303,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
             vc.parseData = parseData
             vc.section = indexPath.section
             vc.index = indexPath.row
+            vc.fromAdd = 0
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -465,6 +466,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
             vc.parseData = parseData
             vc.section = 0
             vc.index = 0
+            vc.fromAdd = 1
             self.navigationController?.pushViewController(vc, animated: true)
         }
         else{
@@ -483,6 +485,9 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     func fetchDataFromParse()
     {
+        
+        
+        self.parseData.removeAll()
         JHProgressHUD.sharedHUD.showInView(UIApplication.sharedApplication().keyWindow!, withHeader: "Loading", andFooter: "")
         
         var userImageFile : PFFile = PFFile()
@@ -515,10 +520,13 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
                         }
                     }
                     
-                    JHProgressHUD.sharedHUD.hide()
                     self.tableView.reloadData()
+                    
+                    JHProgressHUD.sharedHUD.hide()
                     let indexPath = NSIndexPath(forRow:self.indexValue, inSection: self.sectionValue)
                     self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: false)
+                    
+                    
                 })
             }
             else{

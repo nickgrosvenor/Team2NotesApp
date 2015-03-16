@@ -94,6 +94,7 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
                 var dateComparisionResult:NSComparisonResult = d2.compare(d1)
                 if dateComparisionResult == NSComparisonResult.OrderedSame
                 {
+                    navTitle = dateFormter.stringFromDate(tableData[i])
                     currentElement  = i
                 }
             }
@@ -159,27 +160,16 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
         return true
     }
     
-    
-//    func textViewShouldBeginEditing(textView: UITextView) -> Bool{
-//        return true;
-//    }
-//
-//    func textViewShouldEndEditing(textView: UITextView) -> Bool{
-//        return true
-//    }
-//
-//    func textViewDidBeginEditing(textView: UITextView){}
-//
-//    func textViewDidEndEditing(textView: UITextView){}
-    
-    
+
     
     func updateDataInParse(){
         JHProgressHUD.sharedHUD.showInView(UIApplication.sharedApplication().keyWindow!, withHeader: "Saving", andFooter: "")
         
+        println(navTitle)
+        
         var query = PFQuery(className: "NotesApp")
-        query.whereKey("Date", equalTo: navTitle)
         query.whereKey("User", equalTo: PFUser.currentUser())
+        query.whereKey("Date", equalTo: navTitle)
         query.findObjectsInBackgroundWithBlock { (objects:Array!, error:NSError!) -> Void in
             
             if(error == nil){
