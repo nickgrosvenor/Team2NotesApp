@@ -57,7 +57,7 @@ class AddNoteVC: UIViewController, UIScrollViewAccessibilityDelegate, UIImagePic
                 if textLength > 50 {
                     textView.font = UIFont.boldSystemFontOfSize(12)
                 }else{
-                    textView.font = UIFont.boldSystemFontOfSize(20)
+                    textView.font = UIFont.boldSystemFontOfSize(30)
                 }
             }
         }
@@ -88,10 +88,20 @@ class AddNoteVC: UIViewController, UIScrollViewAccessibilityDelegate, UIImagePic
         }
         
         // Changing textview text color
+        changeTextColor()
+        
+        rightbarBtn = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "checkForInsertUpdateInParse")
+        navigationItem.rightBarButtonItems = [rightbarBtn]
+        
+        // Change the background colour of backViewOfTV when image is Added
+    }
+    
+    
+    func changeTextColor(){
         if(imageView != nil){
             if(imageView.image == nil){
                 if(textView.text == "Write Here ....."){
-                  textView.textColor = UIColor.lightGrayColor()
+                    textView.textColor = UIColor.lightGrayColor()
                 }else{
                     textView.textColor = UIColor.blackColor()
                     placeholderLabel.textColor = UIColor.blackColor()
@@ -108,14 +118,7 @@ class AddNoteVC: UIViewController, UIScrollViewAccessibilityDelegate, UIImagePic
                 println("With image: \(imageView.image)")
             }
         }
-        
-        
-        rightbarBtn = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "checkForInsertUpdateInParse")
-        navigationItem.rightBarButtonItems = [rightbarBtn]
-        
-        // Change the background colour of backViewOfTV when image is Added
     }
-    
     
     
     internal func checkForInsertUpdateInParse(){

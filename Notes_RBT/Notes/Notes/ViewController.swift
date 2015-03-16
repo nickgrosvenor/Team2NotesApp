@@ -11,15 +11,20 @@ import UIKit
 class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate  {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var bgTableView: UITableView!
     
     var dateArray = [AnyObject]()
     var monthSection = [Int]()
     var isLoading = false
     var lastDate = NSDate()
-    var bgImages = ["1BG.png","2BG.png","3BG.png","4BG.png"]
+    var bgImages = ["2BG.png","1BG.png","3BG.png","4BG.png"]
     var parseData = [AnyObject]()
     var indexValue = 0;
     var sectionValue = 0;
+    var visibleBGCells = 0;
+    var nextTimeIndex = 0;
+    var nextTimeSection = 0;
+    var thresoldHeight =  CGFloat(0);
     let userCalendar = NSCalendar.currentCalendar()
     let dateFormter = NSDateFormatter()
     
@@ -34,16 +39,23 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         let imageView = UIImageView(image:logo)
         self.navigationItem.titleView = imageView
         
+        
+        bgTableView.dataSource = self
+        bgTableView.delegate = self
+        
+        
         tableView.dataSource = self
         tableView.delegate = self
+        
+        
         getDateData(false)
         
-        var bgImageView = UIImageView()
-        for i in 1...bgImages.count {
-            var randomIndex = Int(arc4random_uniform(UInt32(bgImages.count)))
-            bgImageView.image = UIImage(named: "\(bgImages[randomIndex])")
-            self.tableView.backgroundView = bgImageView
-        }
+        //        var bgImageView = UIImageView()
+        //        for i in 1...bgImages.count {
+        //            var randomIndex = Int(arc4random_uniform(UInt32(bgImages.count)))
+        //            bgImageView.image = UIImage(named: "\(bgImages[randomIndex])")
+        //            self.tableView.backgroundView = bgImageView
+        //        }
     }
     
     
@@ -111,11 +123,6 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     func isYearLeapYear(year:Int)->Bool{
         return (( year%100 != 0) && (year%4 == 0)) || year%400 == 0
     }
-    
-    //    - (BOOL)isYearLeapYear:(NSDate *) aDate {
-    //    NSInteger year = [self yearFromDate:aDate];
-    //    return (( year%100 != 0) && (year%4 == 0)) || year%400 == 0;
-    //    }
     
     
     // Date Work
@@ -228,74 +235,96 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("MainCell") as TableViewCell
-        
-        let tempArr = dateArray[indexPath.section] as NSArray
-        let date = tempArr[indexPath.row] as NSDate
-        
-        var dateComp = userCalendar.components(.CalendarUnitDay | .CalendarUnitWeekday, fromDate: date)
-        var day = dateComp.day
-        var weekDay = dateComp.weekday
-        
-        dateFormter.dateFormat = "MMM dd, yyyy"
-        var dateTitle = dateFormter.stringFromDate(date as NSDate)
-        var isfound = false
-        var noteData = ""
-        
-        if(parseData.count>0)
-        {
-            for (var i=0;i<parseData.count;i++) {
-                var dict: (AnyObject) = parseData[i]
-                
-                if ( dict["Date"] as String == dateTitle ){
-                    isfound = true
-                    noteData = dict["Note"] as String
-                    break
-                }
-            }
-        }
-        
-        cell.dateLabel.text = String(format:"%d", day) as NSString
-        cell.weekDayLbl.text = getDayOfWeek(dateComp.weekday)
-        
-        if isfound {
-            cell.noteLabel.text = noteData
+        if(tableView.tag == 100){
+            visibleBGCells = indexPath.row
+            var cell = tableView.dequeueReusableCellWithIdentifier("ImageCell") as ImageCell
+            cell.bhImageView.image = UIImage(named: bgImages[indexPath.row])
+            return cell
         }
         else{
-            cell.noteLabel.text = ""
+            
+            var cell = tableView.dequeueReusableCellWithIdentifier("MainCell") as TableViewCell
+            
+            let tempArr = dateArray[indexPath.section] as NSArray
+            let date = tempArr[indexPath.row] as NSDate
+            
+            var dateComp = userCalendar.components(.CalendarUnitDay | .CalendarUnitWeekday, fromDate: date)
+            var day = dateComp.day
+            var weekDay = dateComp.weekday
+            
+            dateFormter.dateFormat = "MMM dd, yyyy"
+            var dateTitle = dateFormter.stringFromDate(date as NSDate)
+            var isfound = false
+            var noteData = ""
+            
+            if(parseData.count>0)
+            {
+                for (var i=0;i<parseData.count;i++) {
+                    var dict: (AnyObject) = parseData[i]
+                    
+                    if ( dict["Date"] as String == dateTitle ){
+                        isfound = true
+                        noteData = dict["Note"] as String
+                        break
+                    }
+                }
+            }
+            
+            cell.dateLabel.text = String(format:"%d", day) as NSString
+            cell.weekDayLbl.text = getDayOfWeek(dateComp.weekday)
+            
+            if isfound {
+                cell.noteLabel.text = noteData
+            }
+            else{
+                cell.noteLabel.text = ""
+            }
+            
+            cell.dateLabel.textColor = UIColor.whiteColor()
+            cell.weekDayLbl.textColor = UIColor.whiteColor()
+            cell.noteLabel.textColor = UIColor.whiteColor()
+            
+            
+            return cell
         }
-        
-        cell.dateLabel.textColor = UIColor.whiteColor()
-        cell.weekDayLbl.textColor = UIColor.whiteColor()
-        cell.noteLabel.textColor = UIColor.whiteColor()
-        
-        cell.dateLabel.font = UIFont(name: "HelveticaNeue-Ultralight", size: 32)
-        cell.weekDayLbl.font = UIFont(name: "HelveticaNeue-Light", size: 12)
-        cell.noteLabel.font = UIFont(name: "HelveticaNeue-Light", size: 20)
-        
-        cell.backgroundColor = UIColor.clearColor()
-        
-        return cell
     }
     
     
     
     // Table View Delegate & DataSource Method
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let vc = self.storyboard?.instantiateViewControllerWithIdentifier("ShowNoteVC") as ShowNotesVC
-        vc.dateArray = dateArray
-        vc.parseData = parseData
-        vc.section = indexPath.section
-        vc.index = indexPath.row
-        self.navigationController?.pushViewController(vc, animated: true)
+        
+        if(tableView.tag == 100){
+            
+        }
+        else{
+            let vc = self.storyboard?.instantiateViewControllerWithIdentifier("ShowNoteVC") as ShowNotesVC
+            vc.dateArray = dateArray
+            vc.parseData = parseData
+            vc.section = indexPath.section
+            vc.index = indexPath.row
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dateArray[section].count
+        
+        if(tableView.tag == 100){
+            return bgImages.count
+        }
+        else{
+            return dateArray[section].count
+        }
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return monthSection.count
+        
+        if(tableView.tag == 100){
+            return 1
+        }
+        else{
+            return monthSection.count
+        }
     }
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -312,17 +341,52 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 50
+        
+        if(tableView.tag == 100){
+            return 0
+        }
+        else{
+            return 50
+        }
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 107
+        
+        if(tableView.tag == 100){
+            return UIScreen.mainScreen().bounds.height
+        }
+        else{
+            return 107
+        }
+        
+        
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if(scrollView.contentOffset.y + scrollView.frame.size.height >= scrollView.contentSize.height){
-            if !isLoading{
-                //                getDateData(true)
+        //        if(scrollView.contentOffset.y + scrollView.frame.size.height >= scrollView.contentSize.height){
+        
+        // Work for asynchronus Loading
+        //            if !isLoading{
+        //                getDateData(true)
+        //            }
+        //        }
+        
+        
+        thresoldHeight = scrollView.frame.size.height
+        if(scrollView == self.tableView) {
+            if(scrollView.contentOffset.y > thresoldHeight){
+                thresoldHeight = 568//scrollView.contentOffset.y + scrollView.frame.size.height
+                visibleBGCells++
+                if(visibleBGCells < bgImages.count){
+                    
+                }else{
+                    visibleBGCells = 0
+                }
+                
+                println(visibleBGCells)
+                
+                var indexPath = NSIndexPath(forRow: visibleBGCells, inSection: 0)
+                bgTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Bottom, animated: true)
             }
         }
     }
@@ -393,6 +457,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
                 }
             }
         }
+        
         
         if (isfound){
             let vc = self.storyboard?.instantiateViewControllerWithIdentifier("ShowNoteVC") as ShowNotesVC

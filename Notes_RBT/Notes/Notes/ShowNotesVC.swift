@@ -9,7 +9,7 @@
 import UIKit
 
 
-class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverPresentationControllerDelegate {
 
     var dateArray = [AnyObject]()
     var parseData = [AnyObject]()
@@ -22,7 +22,7 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     var rightbarBtn = UIBarButtonItem()
     var noteTextView = UITextView()
     var cellImageView = UIImageView()
-    
+    var fromAdd = 0;
     var addNoteObject = AddNoteVC()
     
     @IBOutlet weak var tableView: UITableView!
@@ -33,14 +33,28 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.noteTextView.delegate = self
-        
         shareButton.hidden = false
         removeButton.hidden = true
         
         tableView.pagingEnabled = true
         tableView.dataSource = self
         tableView.delegate = self
+
+        self.noteTextView.delegate = self
+        noteTextView.userInteractionEnabled = true
+        noteTextView.editable = false
+      
+        // Auto-resize textfield
+        autoResizeText()
+        
+        if(!noteTextView.text.isEmpty){
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self.noteTextView, action: "showPopupWithText:")
+            tapGestureRecognizer.numberOfTapsRequired = 2
+            noteTextView.addGestureRecognizer(tapGestureRecognizer)
+        }
+        
+        // Change textview text color
+        changeTextColor()
         
         var innerDateArr: Array = (dateArray[section] as NSArray) as Array
         var date: (AnyObject) = innerDateArr[index]
@@ -50,7 +64,7 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
         navTitle = dateFormter.stringFromDate(date as NSDate)
         self.navigationItem.title = navTitle
         
-        rightbarBtn = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Edit, target: self, action: "editClicked")
+        rightbarBtn = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.Plain, target: self, action: "editClicked")
         navigationItem.rightBarButtonItems = [rightbarBtn]
         
         //Also calculate the index
@@ -71,51 +85,66 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
             }
         }
 
+        if(fromAdd == 1) {
+            for(var i=0;i<tableData.count;i++){
+                
+                var d1 = dateFormter.stringFromDate(tableData[i])
+                var d2 = dateFormter.stringFromDate(NSDate())
+                
+                var dateComparisionResult:NSComparisonResult = d2.compare(d1)
+                if dateComparisionResult == NSComparisonResult.OrderedSame
+                {
+                    currentElement  = i
+                }
+            }
+        }
+        
+        
         let indexPath = NSIndexPath(forRow: currentElement, inSection: 0)
         tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: false)
         
-        // Move camera button when keyboard appears
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name:UIKeyboardWillShowNotification, object: nil);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name:UIKeyboardWillHideNotification, object: nil);
+        // Move camera view when keyboard appears
+        moveViewForKeyboard()
+        
+        let aSelector : Selector = "touchOutsideTextView"
+        let tapGesture = UITapGestureRecognizer(target: self, action: aSelector)
+        tapGesture.numberOfTapsRequired = 1
+        view.addGestureRecognizer(tapGesture)
     }
 
-    var bool = false
     
-    func addCategory() {
+    func touchOutsideTextView(){
+         self.view.endEditing(true)
+    }
+    
+    func showPopupWithText() {
+        var popUpView = UIView()
+        popUpView.frame = CGRectMake(UIScreen.mainScreen().bounds.width/2-100, UIScreen.mainScreen().bounds.height/2-125, 200, 250)
+        popUpView.backgroundColor = UIColor.grayColor()
+
+       
+        var noteText = UITextView(frame: CGRectMake(popUpView.frame.width/2-90, popUpView.frame.height/2-110, 180, 380))
+        noteText.text = noteTextView.text
+        noteText.textColor = UIColor.blackColor()
+        noteText.textAlignment = NSTextAlignment.Center
+        noteText.backgroundColor = UIColor.clearColor()
         
-        var popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("NewCategory") as UIViewController
-        var nav = UINavigationController(rootViewController: popoverContent)
-        nav.modalPresentationStyle = UIModalPresentationStyle.Popover
-        var popover = nav.popoverPresentationController
-        popoverContent.preferredContentSize = CGSizeMake(500,600)
-//        popover?.delegate = self
-        popover?.sourceView = self.view
-        popover?.sourceRect = CGRectMake(100,100,0,0)
-        
-        self.presentViewController(nav, animated: true, completion: nil)
+        popUpView.addSubview(noteText)
+        self.view.addSubview(popUpView)
     }
     
     
     func editClicked(){
-        shareButton.hidden = true
-        
-        
-//        if(self.navigationItem.rightBarButtonItem == doneBarBtn){
-//            updateDataInParse()
-//        }else{
-//            self.navigationItem.rightBarButtonItem = doneBarBtn
-//            noteTextView.becomeFirstResponder()
-//        }
-
+        noteTextView.editable = true
         
         if(self.navigationItem.rightBarButtonItem?.title == "Done"){
+            self.navigationItem.rightBarButtonItem?.title = "Edit"
             updateDataInParse()
         }else{
-            
-//            self.navigationItem.rightBarButtonItem = UIBarButtonSystemItem.Done
+            self.navigationItem.rightBarButtonItem?.title = "Done"
             noteTextView.becomeFirstResponder()
         }
-    
+        
         removeButton.hidden = false
         println("Edit clicked")
     }
@@ -123,24 +152,25 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool{
         if text == "\n" {
+            println("Here")
             textView.resignFirstResponder()
-            //return false
+            return false
         }
         return true
     }
     
     
-    func textViewShouldBeginEditing(textView: UITextView) -> Bool{
-        return true;
-    }
-
-    func textViewShouldEndEditing(textView: UITextView) -> Bool{
-        return true
-    }
-
-    func textViewDidBeginEditing(textView: UITextView){}
-
-    func textViewDidEndEditing(textView: UITextView){}
+//    func textViewShouldBeginEditing(textView: UITextView) -> Bool{
+//        return true;
+//    }
+//
+//    func textViewShouldEndEditing(textView: UITextView) -> Bool{
+//        return true
+//    }
+//
+//    func textViewDidBeginEditing(textView: UITextView){}
+//
+//    func textViewDidEndEditing(textView: UITextView){}
     
     
     
@@ -377,8 +407,8 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject])
     {
-      //  bgImage = info[UIImagePickerControllerOriginalImage] as UIImage
-        cellImageView.image = info[UIImagePickerControllerOriginalImage] as UIImage
+        var bgImage = info[UIImagePickerControllerOriginalImage] as UIImage
+        cellImageView.image = bgImage
         cellImageView.contentMode = UIViewContentMode.Center
         cellImageView.frame = CGRectMake(0, 0, cellImageView.frame.size.width, cellImageView.frame.size.height)
         centerImageViewContents()
@@ -445,20 +475,58 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
     }
     
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        self.noteTextView.endEditing(true)
-    }
-    
+//    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+////        self.noteTextView.endEditing(true)
+//        println("Here")
+//        noteTextView.editable = false
+//    }
+//    
    
     func keyboardWillShow(sender: NSNotification) {
-        bool = true
         self.removeButton.frame.origin.y -= 255
-        
+        tableView.scrollEnabled = false
     }
     
     func keyboardWillHide(sender: NSNotification) {
         self.removeButton.frame.origin.y += 255
+        tableView.scrollEnabled = true
     }
 
-
+    
+    func changeTextColor(){
+        if(cellImageView.image == nil){
+            if(noteTextView.text == "Write Here ....."){
+                noteTextView.textColor = UIColor.lightGrayColor()
+            }else{
+                noteTextView.textColor = UIColor.blackColor()
+            }
+        }else{
+            if(noteTextView.text == "Write Here ....."){
+                noteTextView.textColor = UIColor.lightGrayColor()
+            }
+            else{
+                noteTextView.textColor = UIColor.whiteColor()
+            }
+        }
+    }
+    
+    
+    func autoResizeText(){
+        if !noteTextView.text.isEmpty {
+            var textLength = countElements(noteTextView.text)
+        
+            if textLength > 50 {
+                noteTextView.font = UIFont.boldSystemFontOfSize(12)
+            }else{
+                noteTextView.font = UIFont.boldSystemFontOfSize(30)
+            }
+        }
+    }
+    
+    
+    func moveViewForKeyboard(){
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name:UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name:UIKeyboardWillHideNotification, object: nil)
+    }
+    
 }
