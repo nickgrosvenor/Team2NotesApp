@@ -17,7 +17,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     var monthSection = [Int]()
     var isLoading = false
     var lastDate = NSDate()
-    var bgImages = ["2BG.png","1BG.png","3BG.png","4BG.png"]
+    var bgImages = ["1BG.png","2BG.png","3BG.png","4BG.png"]
     var parseData = [AnyObject]()
     var indexValue = 0;
     var sectionValue = 0;
@@ -378,9 +378,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
             if(scrollView.contentOffset.y > thresoldHeight){
                 thresoldHeight = 568//scrollView.contentOffset.y + scrollView.frame.size.height
                 visibleBGCells++
-                if(visibleBGCells < bgImages.count){
-                    
-                }else{
+                if(visibleBGCells >= 4){
                     visibleBGCells = 0
                 }
                 

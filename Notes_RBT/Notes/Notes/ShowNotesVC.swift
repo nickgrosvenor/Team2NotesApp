@@ -202,7 +202,10 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
                     }
                 }
                 else{
-                    self.hideHud()
+                    self.saveDataInParse()
+                    // Add Data in 
+                    
+//                    self.hideHud()
                 }
             }
             else{
@@ -210,6 +213,38 @@ class ShowNotesVC: UIViewController, UITableViewDelegate, UITableViewDataSource,
             }
         }
 
+    }
+    
+    func saveDataInParse(){
+        
+        var imageFile : PFFile!
+        var testObject : PFObject = PFObject(className: "NotesApp")
+        testObject["User"] = PFUser.currentUser()
+        if(self.noteTextView.text.isEmpty){
+            testObject["Note"] = ""
+        }else{
+            testObject["Note"] = self.noteTextView.text
+        }
+        testObject["Date"] = navTitle
+        
+        if(self.cellImageView.image != nil){
+            var imageData = UIImagePNGRepresentation(self.cellImageView.image)
+            var imageFile = PFFile(name:"Image.png", data:imageData)
+            testObject["ImageFileData"] = imageFile
+        }
+        
+        testObject.saveInBackgroundWithBlock {
+            (success: Bool, error: NSError!) -> Void in
+            if (success) {
+                JHProgressHUD.sharedHUD.hide()
+                self.navigationController?.popViewControllerAnimated(true)
+            } else {
+                JHProgressHUD.sharedHUD.hide()
+                let alert = UIAlertView(title: "Error", message:String(format: "%@", error.userInfo!) , delegate: nil, cancelButtonTitle: "Ok")
+                alert.show()
+            }
+            
+        }
     }
     
 

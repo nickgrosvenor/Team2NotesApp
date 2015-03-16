@@ -191,6 +191,8 @@ class AddNoteVC: UIViewController, UIScrollViewAccessibilityDelegate, UIImagePic
             testObject["ImageFileData"] = imageFile
         }
         
+        
+        
         testObject.saveInBackgroundWithBlock {
             (success: Bool, error: NSError!) -> Void in
             if (success) {
@@ -201,6 +203,8 @@ class AddNoteVC: UIViewController, UIScrollViewAccessibilityDelegate, UIImagePic
                 let alert = UIAlertView(title: "Error", message:String(format: "%@", error.userInfo!) , delegate: nil, cancelButtonTitle: "Ok")
                 alert.show()
             }
+            
+
         }
     }
     
