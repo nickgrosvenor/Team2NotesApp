@@ -7,41 +7,79 @@
 //
 
 import UIKit
-
-class MasterTableViewController: UITableViewController, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate {
+class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate,UITableViewDataSource,UITableViewDelegate {
     
     
+    @IBOutlet weak var tblNote: UITableView!
+    @IBOutlet weak var tblImage: UITableView!
     var noteObjects: NSMutableArray! = NSMutableArray()
-    
+    var sectionMonth: NSMutableArray! = NSMutableArray()
+    var bgTblContentSize : Float = 0
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+      self.title = "Timeline"
         let logo = UIImage(named: "uploadistLogo")
         let imageView = UIImageView(image:logo)
         self.navigationItem.titleView = imageView
-        
-        
-        
-        
-  
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        let button = UIButton(frame: CGRectMake(0, 0, 10, 10))
     }
     
     
-    // the code below here is for the Parse login, everytime the view appears the code will check to see if there's a user. if there in no user it's gonna create a login and signup view controller, if there is it's gonna bypass all that. 
     
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+        if(keyPath == "contentSize"){
+            tblImage.layoutIfNeeded()
+            tblNote.layoutIfNeeded()
+           
+            
+            self.tblImage.reloadData()
+        }
+        else if (keyPath == "contentOffset")
+        {
+            tblImage.layoutIfNeeded()
+            tblNote.layoutIfNeeded()
+            NSLog("ContentSize For Front : width- %f - height - %f",Float(self.tblNote.contentSize.width),Float(self.tblNote.contentSize.height))
+            NSLog("ContentSize For Back : width- %f - height - %f",Float(self.tblImage.contentSize.width),Float(self.tblImage.contentSize.height))
+            
+            var frontTableHeight = Float(self.tblNote.contentSize.height)
+            var backTableHeight = Float(self.tblImage.contentSize.height)
+            if frontTableHeight == 0 {
+                frontTableHeight = 1
+            }
+            var factor : Float = backTableHeight / frontTableHeight
+           
+            // this just ensures the backTable is scrolling together with the front table
+            var front : UITableView = object as UITableView;
+            var contentoffSetFront = CGPointMake(front.contentOffset.x, front.contentOffset.y * CGFloat(factor))
+            self.tblImage.contentOffset = contentoffSetFront;
+        }
+        
+    }
+
+    
+    
+    
+    // the code below here is for the Parse login, everytime the view appears the code will check to see if there's a user. if there in no user it's gonna create a login and signup view controller, if there is it's gonna bypass all that. 
+  override func viewWillAppear(animated: Bool) {
+    self.navigationController?.navigationBar.barTintColor = UIColor.whiteColor()
+    self.navigationController?.navigationBar.tintColor = UIColor.blackColor()
+    self.navigationController?.navigationBar.translucent = false;
+    self.tblNote .addObserver(self, forKeyPath: "contentSize", options: NSKeyValueObservingOptions.New, context: nil)
+    self.tblNote .addObserver(self, forKeyPath: "contentOffset", options: NSKeyValueObservingOptions.New, context: nil)
+
+    }
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tblNote.removeObserver(self, forKeyPath: "contentSize")
+        self.tblNote.removeObserver(self, forKeyPath: "contentOffset")
+    }
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if (PFUser.currentUser() == nil){
-            
+              if (PFUser.currentUser() == nil){
+          //  self.noteObjects.removeAllObjects()
+            self.tblNote.reloadData()
             var logInViewController = PFLogInViewController()
             
             logInViewController.delegate = self
@@ -56,7 +94,7 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
             
         } else {
             
-            self.fetchAllObjectsFromLocalDataStore()
+            //self.fetchAllObjectsFromLocalDataStore()
             self.fetchAllObjects()
         }
     }
@@ -65,16 +103,113 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
         
         var query: PFQuery = PFQuery(className: "Note")
         query.fromLocalDatastore()
-        
         query.whereKey("username", equalTo: PFUser.currentUser().username)
-        
+        query.orderByDescending("date")
         query.findObjectsInBackgroundWithBlock{ (objects, error) -> Void in
             
             if (error == nil){
                 var temp: NSArray = objects as NSArray
+                var arrnote = temp.mutableCopy() as NSMutableArray
+                var firstObj: PFObject = arrnote.objectAtIndex(0) as PFObject
+                var lastObj: PFObject = arrnote.objectAtIndex(arrnote.count-1) as PFObject
+                var firstDate = firstObj["date"] as? NSDate
+                 var currentDate = NSDate()
+                NSUserDefaults.standardUserDefaults().setValue(firstDate, forKey: "date")
+                var lastDate = lastObj["date"] as? NSDate
+                var calendar = NSCalendar.currentCalendar()
+                let components = NSCalendarUnit.CalendarUnitDay | NSCalendarUnit.CalendarUnitMonth
+                var noofDays : NSDateComponents = calendar.components(components, fromDate: lastDate!, toDate: currentDate, options: nil)
+                NSLog("no of days : %d",noofDays.day)
+                NSLog("no of month : %d",noofDays.month)
+              
+                self.noteObjects = NSMutableArray()
+                for (var index = 0; index <= noofDays.day; ++index) {
+                    var objNote = NSMutableDictionary()
+                    var cdate = NSDate()
+                    var calender:NSCalendar = NSCalendar.currentCalendar()
+                    let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:cdate)
+                    components.day -= index
+                    components.hour = 0
+                    components.minute = 0
+                    components.second = 0
+                    var currentDate:NSDate = calender.dateFromComponents(components)!
+                    objNote["date"] = currentDate as NSDate
+                    var randomNumber = arc4random() % 25;
+                    var img = UIImage(named: NSString(format: "img%d", randomNumber))
+                    objNote["image"] = img
+                    objNote["aspectFactor"] = Float(img!.size.width/img!.size.height)
+                    NSLog("%@",objNote)
+                    var fHeight : Float = (Float(self.view.frame.size.height) / Float(img!.size.width/img!.size.height))
+                    objNote["height"] = fHeight
+                    self.bgTblContentSize += fHeight
+                   
+                    for object  in arrnote{
+                        var obj = object as PFObject
+                        
+                        if(obj["date"] as? NSDate == currentDate)
+                        {
+                            objNote["title"] = obj["title"] as? String
+                            var imageFile : AnyObject?  =  obj["image"]
+                            if(imageFile != nil)
+                            {
+                                imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                                    var imageBackground = UIImage(data: data)
+                                    objNote["image"] = imageBackground
+                                    objNote["aspectFactor"] = Float(imageBackground!.size.width/imageBackground!.size.height)
+                                    NSLog("%@",objNote)
+                                    var fHeight : Float = (Float(self.view.frame.size.height) / Float(imageBackground!.size.width/imageBackground!.size.height))
+                                    objNote["height"] = fHeight
+                                    self.tblNote.reloadData()
+                                    
+                                })
+                                
+                            }
+                          
+                        }
+                       
+                        
+                        
+
+                    }
+                     self.noteObjects.addObject(objNote)
+                }
+                self.tblNote.reloadData()
+                if(noofDays.month > 0)
+                {
+                    var arrNotes = NSMutableDictionary()
+                    for(var i = 0; i<noofDays.month ; i--)
+                    {
+                        var cdate = NSDate()
+                        var calender:NSCalendar = NSCalendar.currentCalendar()
+                        let components = calender.components((NSCalendarUnit.CalendarUnitMonth), fromDate:cdate)
+                        components.month -= 1
+                        var currentDate:NSDate = calender.dateFromComponents(components)!
+                        let componentsForDate = calender.components((NSCalendarUnit.CalendarUnitMonth), fromDate:currentDate)
+                        var arrMonth = NSMutableArray()
+                        
+                        for object  in self.noteObjects{
+                            var obj = object as NSMutableDictionary
+                            var objdate = obj["date"] as? NSDate
+                           let componentsForobjDate = calender.components((NSCalendarUnit.CalendarUnitMonth), fromDate:objdate!)
+                            if(componentsForDate.month == componentsForobjDate.month){
+                                arrMonth.addObject(obj)
+                            }
+                           
+                            
+                            
+                    }
+                        var dateFormatter = NSDateFormatter()
+                        dateFormatter.dateFormat = "MMMM"
+                        var DateInFormat = dateFormatter.stringFromDate(currentDate)
+                        arrNotes.setObject(arrMonth, forKey: DateInFormat)
+                        
+                }
+                    
+                }
+               
                 
-                self.noteObjects = temp.mutableCopy() as NSMutableArray
-                self.tableView.reloadData()
+                
+                
             } else {
                 println(error.userInfo)
             }
@@ -82,6 +217,8 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
         }
     
     }
+    
+    
     
     func fetchAllObjects(){
         
@@ -94,15 +231,11 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
         query.findObjectsInBackgroundWithBlock {(objects, error) -> Void in
             
             if (error == nil){
-            
                 PFObject.pinAllInBackground(objects, block: nil)
-                
                 self.fetchAllObjectsFromLocalDataStore()
             
             } else {
-                
                 println(error.userInfo)
-            
             }
     
         }
@@ -163,101 +296,77 @@ class MasterTableViewController: UITableViewController, PFLogInViewControllerDel
         println("User dismissed signup")
     }
     
+    @IBAction func btnAddClick(sender: AnyObject) {
+        NSLog("button clicked")
+        var addNote: AddNoteTableViewController = self.storyboard?.instantiateViewControllerWithIdentifier("AddNoteTableViewController") as AddNoteTableViewController
+        addNote.isEdited=false;
+        self.navigationController?.pushViewController(addNote, animated: true)
+        
+    }
+    @IBAction func btnOptionClick(sender: AnyObject) {
+        NSLog("button clicked")
+        var optionVC: OptionViewController = self.storyboard?.instantiateViewControllerWithIdentifier("OptionViewController") as OptionViewController
+        self.navigationController?.pushViewController(optionVC, animated: true)
+        
+    }
     
     
-
-
+    
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
-        return 1
-    }
-
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
-        // Return the number of rows in the section.
-        return self.noteObjects.count
-    }
-
-
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as MasterTableViewCell
-
-        var object: PFObject = self.noteObjects.objectAtIndex(indexPath.row) as PFObject
-        
-        cell.masterTitleLabel?.text = object["title"] as? String
-        cell.masterTextLabel?.text = object["text"] as? String
-        
-        return cell
-    }
     
-    override func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-        self.performSegueWithIdentifier("editNote", sender: self)
+
+    
+   
+     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+       
+        return self.noteObjects.count ;
     }
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        var upcoming: AddNoteTableViewController = segue.destinationViewController as AddNoteTableViewController
-        
-        if (segue.identifier == "editNote") {
-            
-            let indexPath = self.tableView.indexPathForSelectedRow()!
-            
-            var object: PFObject = self.noteObjects.objectAtIndex(indexPath.row) as PFObject
-            
-            upcoming.object = object
-        
-            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        
+    
+     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        if(tableView.tag==0){
+        let cell = self.tblNote.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as MasterTableViewCell
+        var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
+        cell.masterTextLabel?.text = object["title"] as? String
+        var dateStr = object["date"] as? NSDate
+        var formatter:NSDateFormatter = NSDateFormatter()
+        formatter.dateFormat = "dd"
+        var formatter1:NSDateFormatter = NSDateFormatter()
+        formatter1.dateFormat = "EEEE"
+        cell.dateLabel?.text = formatter.stringFromDate(dateStr!)
+        cell.masterTitleLabel?.text = formatter1.stringFromDate(dateStr!)
+        var bgColorView = UIView()
+        bgColorView.backgroundColor = UIColor.clearColor()
+        cell.selectedBackgroundView = bgColorView
+        return cell
+        }
+        else
+        {
+            var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
+            let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as BackgroundCell
+            cell.imgView.image = object["image"] as? UIImage
+            return cell
+
         }
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the specified item to be editable.
-        return true
+    
+      func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
+        var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
+        var addNote: NotesDetailViewController = self.storyboard?.instantiateViewControllerWithIdentifier("NotesDetailViewController") as NotesDetailViewController
+        addNote.strTitle = object["title"] as? String
+        addNote.indexofNote = indexPath.row
+        addNote.noteObjects = self.noteObjects
+        self.navigationController?.pushViewController(addNote, animated: true)
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat{
+        if(tableView.tag != 0){
+            var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
+            var fHeight : Float = object["height"] as Float
+            return CGFloat(fHeight)
+        }
+        return 150.0
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return NO if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    
 }

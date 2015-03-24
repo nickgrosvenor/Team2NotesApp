@@ -33,6 +33,15 @@
 		015AA20F1A96C89A00479A7F /* AddNoteTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015AA20E1A96C89A00479A7F /* AddNoteTableViewController.swift */; };
 		015AA23F1A9BC1C600479A7F /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015AA23E1A9BC1C600479A7F /* Accounts.framework */; };
 		015AA2411A9BC1CD00479A7F /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015AA2401A9BC1CD00479A7F /* Social.framework */; };
+		41070F1C1ABBEED300850EC3 /* BackgroundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */; };
+		41070F1E1ABC248600850EC3 /* ImageData.rdb in Resources */ = {isa = PBXBuildFile; fileRef = 41070F1D1ABC248600850EC3 /* ImageData.rdb */; };
+		41070F211ABC24D100850EC3 /* NSString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41070F1F1ABC24D100850EC3 /* NSString+Extension.swift */; };
+		41070F221ABC24D100850EC3 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41070F201ABC24D100850EC3 /* Database.swift */; };
+		41070F241ABC258600850EC3 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41070F231ABC258600850EC3 /* libsqlite3.0.dylib */; };
+		412BEBD41AB98ABB0012B714 /* setting-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 412BEBD31AB98ABB0012B714 /* setting-icon@2x.png */; };
+		412BEBD61AB98B810012B714 /* OptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412BEBD51AB98B810012B714 /* OptionViewController.swift */; };
+		412BEBD81AB9AD030012B714 /* AboutUsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */; };
+		41E61D461AB2FDF000001229 /* NotesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +86,15 @@
 		015AA20E1A96C89A00479A7F /* AddNoteTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNoteTableViewController.swift; sourceTree = "<group>"; };
 		015AA23E1A9BC1C600479A7F /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		015AA2401A9BC1CD00479A7F /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundCell.swift; sourceTree = "<group>"; };
+		41070F1D1ABC248600850EC3 /* ImageData.rdb */ = {isa = PBXFileReference; lastKnownFileType = file; path = ImageData.rdb; sourceTree = "<group>"; };
+		41070F1F1ABC24D100850EC3 /* NSString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+Extension.swift"; sourceTree = "<group>"; };
+		41070F201ABC24D100850EC3 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		41070F231ABC258600850EC3 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		412BEBD31AB98ABB0012B714 /* setting-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting-icon@2x.png"; sourceTree = "<group>"; };
+		412BEBD51AB98B810012B714 /* OptionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionViewController.swift; sourceTree = "<group>"; };
+		412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutUsViewController.swift; sourceTree = "<group>"; };
+		41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41070F241ABC258600850EC3 /* libsqlite3.0.dylib in Frameworks */,
 				015AA2411A9BC1CD00479A7F /* Social.framework in Frameworks */,
 				015AA23F1A9BC1C600479A7F /* Accounts.framework in Frameworks */,
 				015AA2081A96BFE600479A7F /* libsqlite3.dylib in Frameworks */,
@@ -118,6 +137,7 @@
 		015AA1BB1A96BDAB00479A7F = {
 			isa = PBXGroup;
 			children = (
+				41070F231ABC258600850EC3 /* libsqlite3.0.dylib */,
 				015AA2401A9BC1CD00479A7F /* Social.framework */,
 				015AA23E1A9BC1C600479A7F /* Accounts.framework */,
 				015AA2071A96BFE600479A7F /* libsqlite3.dylib */,
@@ -154,15 +174,23 @@
 		015AA1C61A96BDAB00479A7F /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				41070F1F1ABC24D100850EC3 /* NSString+Extension.swift */,
+				41070F201ABC24D100850EC3 /* Database.swift */,
+				41070F1D1ABC248600850EC3 /* ImageData.rdb */,
+				412BEBD31AB98ABB0012B714 /* setting-icon@2x.png */,
 				015AA2091A96C05300479A7F /* Bridging-Header.h */,
 				015AA1C91A96BDAB00479A7F /* AppDelegate.swift */,
 				015AA20A1A96C78400479A7F /* MasterTableViewController.swift */,
 				015AA20C1A96C7B700479A7F /* MasterTableViewCell.swift */,
 				015AA20E1A96C89A00479A7F /* AddNoteTableViewController.swift */,
+				41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */,
+				41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */,
+				412BEBD51AB98B810012B714 /* OptionViewController.swift */,
 				015AA1CD1A96BDAB00479A7F /* Main.storyboard */,
 				015AA1D01A96BDAB00479A7F /* Images.xcassets */,
 				015AA1D21A96BDAB00479A7F /* LaunchScreen.xib */,
 				015AA1C71A96BDAB00479A7F /* Supporting Files */,
+				412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -272,7 +300,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				412BEBD41AB98ABB0012B714 /* setting-icon@2x.png in Resources */,
 				015AA1CF1A96BDAB00479A7F /* Main.storyboard in Resources */,
+				41070F1E1ABC248600850EC3 /* ImageData.rdb in Resources */,
 				015AA1D41A96BDAB00479A7F /* LaunchScreen.xib in Resources */,
 				015AA1D11A96BDAB00479A7F /* Images.xcassets in Resources */,
 			);
@@ -292,10 +322,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41070F211ABC24D100850EC3 /* NSString+Extension.swift in Sources */,
 				015AA1CA1A96BDAB00479A7F /* AppDelegate.swift in Sources */,
 				015AA20D1A96C7B700479A7F /* MasterTableViewCell.swift in Sources */,
+				41E61D461AB2FDF000001229 /* NotesDetailViewController.swift in Sources */,
 				015AA20F1A96C89A00479A7F /* AddNoteTableViewController.swift in Sources */,
+				412BEBD81AB9AD030012B714 /* AboutUsViewController.swift in Sources */,
 				015AA20B1A96C78400479A7F /* MasterTableViewController.swift in Sources */,
+				412BEBD61AB98B810012B714 /* OptionViewController.swift in Sources */,
+				41070F221ABC24D100850EC3 /* Database.swift in Sources */,
+				41070F1C1ABBEED300850EC3 /* BackgroundCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
