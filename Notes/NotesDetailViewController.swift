@@ -3,7 +3,6 @@
 //  Notes
 //
 //  Created by Pragnesh Dixit on 13/03/15.
-//  Copyright (c) 2015 Nick Grosvenor. All rights reserved.
 //
 
 import Foundation
@@ -17,22 +16,31 @@ class NotesDetailViewController: UIViewController{
         var indexofNote:Int!
         var noteObjects: NSMutableArray! = NSMutableArray()
     
+    // MARK:
+    // MARK: UIVIewController LifeCycle Methods
+    // MARK:
+
     override func viewDidLoad() {
         super.viewDidLoad()
-       
         var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
         strdate = object["date"] as NSDate
-        imgView.image =  object["image"] as UIImage
+        if(object["isImage"] as Bool == true)
+        {
+            imgView.image =  object["image"] as? UIImage
+        }
+        else
+        {
+               imgView.image =  nil
+        }
         self.lblTitleText.text = strTitle
         var swipeUP = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         swipeUP.direction = UISwipeGestureRecognizerDirection.Up
         self.view.addGestureRecognizer(swipeUP)
-        
         var swipeDown = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         swipeDown.direction = UISwipeGestureRecognizerDirection.Down
         self.view.addGestureRecognizer(swipeDown)
-        
     }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
@@ -44,11 +52,17 @@ class NotesDetailViewController: UIViewController{
         self.title = DateInFormat
 
     }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
            // self.fetchAllObjectsFromLocalDataStore()
         //self.fetchAllObjects()
     }
+    
+    // MARK:
+    // MARK: Get Object of Notes From Parse
+    // MARK:
+
     func fetchAllObjectsFromLocalDataStore(){
         
         var query: PFQuery = PFQuery(className: "Note")
@@ -73,15 +87,11 @@ class NotesDetailViewController: UIViewController{
     }
     
     func fetchAllObjects(){
-        
         PFObject.unpinAllObjectsInBackgroundWithBlock(nil)
-        
         var query: PFQuery = PFQuery(className: "Note")
-        
         query.whereKey("username", equalTo: PFUser.currentUser().username)
-        
         query.findObjectsInBackgroundWithBlock {(objects, error) -> Void in
-            
+
             if (error == nil){
                 
                 PFObject.pinAllInBackground(objects, block: nil)
@@ -96,21 +106,35 @@ class NotesDetailViewController: UIViewController{
             
         }
     }
-    
-    
+
+    // MARK:
+    // MARK: UIButton Action Methods
+    // MARK:
+
     @IBAction func btnpresentActivityController(sender: AnyObject) {
-        
         let titleText:String! = lblTitleText.text?
         let imgShare:UIImage = imgView.image!
         let activityViewController = UIActivityViewController(
             activityItems: [imgShare],
             applicationActivities: nil)
         self.navigationController?.presentViewController(activityViewController, animated: true, completion: { () -> Void in
-            
         });
-    
+    }
+
+   @IBAction func editAction(sender: UIBarButtonItem) {
+        var editNote:AddNoteTableViewController  = self.storyboard?.instantiateViewControllerWithIdentifier("AddNoteTableViewController") as AddNoteTableViewController
+        editNote.strDate = self.strdate
+        editNote.isEdited = true
+        editNote.imageObj = imgView.image
+        editNote.strTitle = lblTitleText.text
+        editNote.strNavTitle = self.title
+        self.navigationController?.pushViewController(editNote, animated: true)
     }
     
+    
+    // MARK:
+    // MARK: UISWIPE GESTURE METHODS
+    // MARK:
     
     func respondToSwipeGesture(gesture: UIGestureRecognizer) {
         
@@ -119,14 +143,20 @@ class NotesDetailViewController: UIViewController{
             if(swipeGesture.direction == UISwipeGestureRecognizerDirection.Up){
                 if(indexofNote < self.noteObjects.count-1)
                 {
-                    
                     self.indexofNote = self.indexofNote + 1
                     var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
-                     imgView.image =  object["image"] as UIImage
+                    if(object["isImage"] as Bool == true)
+                    {
+                        imgView.image =  object["image"] as? UIImage
+                    }
+                    else
+                    {
+                        imgView.image =  nil
+                    }
+                    // imgView.image =  object["image"] as? UIImage
                     self.strTitle = object["title"] as? String
                     lblTitleText.text = strTitle
                      strdate = object["date"] as NSDate
-                    
                     var dateFormatter = NSDateFormatter()
                     var dateStr = object["date"] as? NSDate
                     dateFormatter.dateFormat = "MMM dd,yyyy"
@@ -153,7 +183,15 @@ class NotesDetailViewController: UIViewController{
                     animation.timingFunction = CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseInEaseOut)
                     (self.view.layer).addAnimation(animation, forKey: nil)
                     var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
-                    imgView.image =  object["image"] as UIImage
+                    if(object["isImage"] as Bool == true)
+                    {
+                        imgView.image =  object["image"] as? UIImage
+                    }
+                    else
+                    {
+                        imgView.image =  nil
+                    }
+                    imgView.image =  object["image"] as? UIImage
                      strdate = object["date"] as NSDate
                     self.strTitle = object["title"] as? String
                     lblTitleText.text = strTitle
@@ -168,19 +206,4 @@ class NotesDetailViewController: UIViewController{
         }
     }
   
-    
-    
-    
-    @IBAction func editAction(sender: UIBarButtonItem) {
-        var editNote:AddNoteTableViewController  = self.storyboard?.instantiateViewControllerWithIdentifier("AddNoteTableViewController") as AddNoteTableViewController
-        editNote.strDate = self.strdate
-        editNote.isEdited = true
-        editNote.imageObj = imgView.image
-        editNote.strTitle = lblTitleText.text
-        editNote.strNavTitle = self.title
-        self.navigationController?.pushViewController(editNote, animated: true)
-
-        
-    }
-
 }

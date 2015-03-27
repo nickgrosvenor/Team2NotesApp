@@ -26,48 +26,57 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
     var picker:UIImagePickerController?=UIImagePickerController()
     var popover:UIPopoverController?=nil
     var object: PFObject!
-     override func viewDidAppear(animated: Bool) {
+    
+    // MARK:
+    // MARK: ViewCotroller LifeCycle Methos
+    // MARK:
+    
+    override func viewDidAppear(animated: Bool) {
       super.viewDidAppear(animated)
          self.titleField.becomeFirstResponder()
     }
     override func viewWillAppear(animated: Bool) {
-       
         self.titleField.text = strTitle
         self.navigationController?.navigationBar.barTintColor = UIColor.blackColor()
         self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
         self.navigationController?.navigationBar.translucent = false
         let currentDate = NSDate()
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
-           }
+    }
 
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         if(self.isEdited == true){
-            btnCamera.setBackgroundImage(self.imageObj, forState: UIControlState.Normal)
+            if((imageObj) != nil)
+            {
+                isImageSelected = true
+                btnCamera.setBackgroundImage(self.imageObj, forState: UIControlState.Normal)
+            }
+            else
+            {
+                var image = UIImage(named: "CameraIcon")
+                btnCamera.setImage(image, forState: UIControlState.Normal)
+            }
             lblPlaceHolder.hidden=true;
             btnClose.hidden=true;
             self.title=strNavTitle
         }
         else
         {
-            
+            var image = UIImage(named: "CameraIcon")
+            btnCamera.setImage(image, forState: UIControlState.Normal)
             var dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "MMM dd,yyyy"
-            
             var DateInFormat = dateFormatter.stringFromDate(NSDate())
             self.title = DateInFormat
-            
         }
 
         if(self.object != nil) {
-            
-            
             self.titleField?.text = self.object["title"] as? String
           
         } else {
-            
             self.object = PFObject(className: "Note")
-        
         }
     }
 
@@ -75,57 +84,50 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-   
+    
+    
+    // MARK:
+    // MARK: UIButton Action Methods
+    // MARK:
+    
     @IBAction func saveAction(sender: UIBarButtonItem) {
         if(self.isImageSelected == true){
-            
             let imageData = UIImageJPEGRepresentation(self.imgUpload,0.7)
             let imageFile = PFFile(name:"image.png", data:imageData)
             self.object["image"] = imageFile
-            
-            
         }
-
         if(isEdited == true)
         {
             var query: PFQuery = PFQuery(className: "Note")
             query.fromLocalDatastore()
             query.whereKey("date", equalTo:strDate)
-            
-           query.getFirstObjectInBackgroundWithBlock({ (noteObject , error) -> Void in
-            
-            
-             if (error == nil){
-                if(self.isImageSelected == true){
-                    
-                    let imageData = UIImageJPEGRepresentation(self.imgUpload,0.7)
-                    let imageFile = PFFile(name:"image.png", data:imageData)
-                    noteObject["image"] = imageFile
-                }
+            query.getFirstObjectInBackgroundWithBlock({ (noteObject , error) -> Void in
 
+                if (error == nil){
+                    
+                    if(self.isImageSelected == true){
+                        let imageData = UIImageJPEGRepresentation(self.imgUpload,0.7)
+                        let imageFile = PFFile(name:"image.png", data:imageData)
+                        noteObject["image"] = imageFile
+                    }
+                    
                     noteObject.setObject(self.titleField.text, forKey: "title")
                     noteObject.saveInBackgroundWithBlock({ (success, error) -> Void in
-                        if(success == true)
-                        {
-                               self.navigationController?.popToRootViewControllerAnimated(true)
+                        if(success == true){
+                            self.navigationController?.popToRootViewControllerAnimated(true)
                         }
-                        else
-                        {
+                        else{
                             println(error)
                         }
-                })
+                    })
                 
             }
                 else
              {
                 if(self.isImageSelected == true){
-                
                     let imageData = UIImageJPEGRepresentation(self.imgUpload,0.7)
                     let imageFile = PFFile(name:"image.png", data:imageData)
                     self.object["image"] = imageFile
-                    
-                
                 }
                 self.object["username"] = PFUser.currentUser().username
                 NSLog("user Name :-  %@", PFUser.currentUser().username)
@@ -138,7 +140,6 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
                 components.minute = 0
                 components.second = 0
                 var currentDate:NSDate = calender.dateFromComponents(components)!
-                
                 self.object["date"] = currentDate
                 self.object.saveInBackgroundWithBlock({ (success, error) -> Void in
                     if(success == true)
@@ -148,38 +149,17 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
                     else
                     {
                         var alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-                        //                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-                        //                        self.presentViewController(alert, animated: true, completion: nil)
                     }
                     }
                 )
-
-//                self.object.saveEventually { (success, error) -> Void in
-//                    
-//                    if (error == nil){
-//                        self.navigationController?.popToRootViewControllerAnimated(true)
-//                    } else {
-//                        var alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-//                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-//                        self.presentViewController(alert, animated: true, completion: nil)
-//                        
-//                    }
-//                }
              }
             
            })
-            
-            
-
         }
         else
         {
-
-            
-
             var query: PFQuery = PFQuery(className: "Note")
             query.fromLocalDatastore()
-           
             var cdate = NSDate()
             var calender:NSCalendar = NSCalendar.currentCalendar()
             let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:cdate)
@@ -187,18 +167,13 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
             components.minute = 0
             components.second = 0
             var currentDate:NSDate = calender.dateFromComponents(components)!
-            
             query.whereKey("date", equalTo:currentDate)
             query.getFirstObjectInBackgroundWithBlock({ (noteObject , error) -> Void in
-                
                 if (error == nil){
                     if(self.isImageSelected == true){
-                        
                         let imageData = UIImageJPEGRepresentation(self.imgUpload,0.7)
                         let imageFile = PFFile(name:"image.png", data:imageData)
                         noteObject["image"] = imageFile
-                        
-                        
                     }
                     noteObject.setObject(self.titleField.text, forKey: "title")
                     noteObject.saveInBackgroundWithBlock({ (success, error) -> Void in
@@ -211,8 +186,7 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
                     var lastDate:NSDate?
                     if( NSUserDefaults.standardUserDefaults().objectForKey("date") != nil)
                     {
-                         lastDate = NSUserDefaults.standardUserDefaults().objectForKey("date") as NSDate
-
+                         lastDate = NSUserDefaults.standardUserDefaults().objectForKey("date") as? NSDate
                     }
                     else
                     {
@@ -227,8 +201,6 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
                             let imageData = UIImageJPEGRepresentation(self.imgUpload,0.7)
                             let imageFile = PFFile(name:"image.png", data:imageData)
                             self.object["image"] = imageFile
-                            
-                            
                         }
 
                         self.object["username"] = PFUser.currentUser().username
@@ -252,24 +224,11 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
                             else
                             {
                                 var alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-                                //                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-                                //                        self.presentViewController(alert, animated: true, completion: nil)
-                            }
+                                }
                             }
                         )
-//                        self.object.saveEventually { (success, error) -> Void in
-//                        
-//                        if (error == nil){
-//                            self.navigationController?.popToRootViewControllerAnimated(true)
-//                        } else {
-//                            var alert = UIAlertController(title: "Alert", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.Alert)
-//                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-//                            self.presentViewController(alert, animated: true, completion: nil)
-//                            
-//                        }
-//                    }
 
-                }
+                    }
                     else{
                         for(var i = 0; i<noofdays ; i++) {
                             self.object = PFObject(className: "Note")
@@ -303,28 +262,19 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
                                     self.presentViewController(alert, animated: true, completion: nil)
                                     
                                 }
+                            }
                         }
-                    }
                     }
                 }
                 
-             
-            
-                
             })
         
-        
-
-           
-        
         }
-        
-       
         
     }
     
     
-
+    
     @IBAction func btnCloseClick(sender: AnyObject) {
         NSLog("button click")
         self.lblPlaceHolder.hidden=true;
@@ -332,10 +282,8 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
         
     }
     
-    
-    
-    
     @IBAction func btnCamera(sender: AnyObject) {
+    
         if(!isImageSelected)
         {
             picker!.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
@@ -352,15 +300,16 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
         }
         else
         {
-           // let actionSheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle:nil, otherButtonTitles: "Remove Photo",nil)
-           
-
-           // actionSheet.showInView(self.view)
-         
+            
+            let actionSheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: "Remove Photo")
+            actionSheet.showInView(self.view)
         }
     }
     
     
+    // MARK:
+    // MARK: UIImagePicker Delegate Methods
+    // MARK:
     
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]!)
     {
@@ -368,18 +317,24 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
         isImageSelected=true;
         let img = info[UIImagePickerControllerOriginalImage] as UIImage
         imgUpload = img
-      //  self.btnCamera.setTitle(nil, forState:UIControlState.Normal)
+        btnCamera.setImage(nil, forState: UIControlState.Normal)
         self.btnCamera.setBackgroundImage(img,  forState: UIControlState.Normal)
         self.btnCamera.setBackgroundImage(img,  forState: UIControlState.Selected)
         self.btnCamera.setBackgroundImage(img,  forState: UIControlState.Highlighted)
-      //  imageView.image=info[UIImagePickerControllerOriginalImage] as UIImage
-        //sets the selected image to image view
     }
     func imagePickerControllerDidCancel(picker: UIImagePickerController!)
     {
         picker .dismissViewControllerAnimated(true, completion: nil)
-        
     }
+    
+    
+    
+    
+    
+    
+    // MARK:
+    // MARK: Other Methods
+    // MARK:
     
     func numberOfDaysBetween(date:NSDate)  -> Int{
         var calender: NSCalendar = NSCalendar.currentCalendar()
@@ -390,5 +345,35 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
     
     
     
- 
+    
+    // MARK:
+    // MARK: UITextView Delegae Metho
+    // MARK:
+    
+    func textView(textView: UITextView!, shouldChangeTextInRange: NSRange, replacementText: NSString!) -> Bool {
+        if(replacementText == "\n") {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+    
+    
+    
+    // MARK:
+    // MARK:UIACTIONSHEET DELEGATE
+    // MARK:
+    func actionSheet(actionSheet: UIActionSheet!, clickedButtonAtIndex buttonIndex: Int)
+    {
+        if(buttonIndex == 0)
+        {
+        
+            var randomNumber = arc4random() % 25;
+            var img = UIImage(named: NSString(format: "img%d", randomNumber))
+            imgUpload = img
+            self.btnCamera.setBackgroundImage(img,  forState: UIControlState.Normal)
+            self.btnCamera.setBackgroundImage(img,  forState: UIControlState.Selected)
+            self.btnCamera.setBackgroundImage(img,  forState: UIControlState.Highlighted)
+        }
+    }
 }

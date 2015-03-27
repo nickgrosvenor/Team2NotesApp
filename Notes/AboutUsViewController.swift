@@ -13,7 +13,10 @@ class AboutUsViewController: UIViewController,UIWebViewDelegate{
     
     @IBOutlet weak var webView: UIWebView!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
-    
+   
+    // MARK:
+    // MARK: UIVIewController LifeCycle Methods
+    // MARK:
     override func viewDidLoad() {
         super.viewDidLoad()
         let logo = UIImage(named: "uploadistLogo")
@@ -23,7 +26,12 @@ class AboutUsViewController: UIViewController,UIWebViewDelegate{
         let requestURL = NSURL(string:url)
         let request = NSURLRequest(URL: requestURL!)
         webView.loadRequest(request)
-}
+    }
+    
+    // MARK:
+    // MARK: UIWEBVIEW Delegate Methods
+    // MARK:
+
      func webViewDidStartLoad(webView: UIWebView){
         self.indicator .startAnimating()
     }

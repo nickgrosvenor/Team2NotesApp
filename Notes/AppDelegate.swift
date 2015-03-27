@@ -2,9 +2,7 @@
 //  AppDelegate.swift
 //  Notes
 //
-//  Created by Nick Grosvenor on 2/19/15.
-//  Copyright (c) 2015 Nick Grosvenor. All rights reserved.
-//
+
 
 import UIKit
 
@@ -15,15 +13,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-
-      
         Parse.enableLocalDatastore()
         Parse.setApplicationId("QSfnm9L7AioNQU3saN6qcRabghkKZSakdYEbaJYh", clientKey: "qw9CIl6gaE7aAkueN2mrhS8hGZmO2BATtw0PfJc9")
-        
         PFAnalytics.trackAppOpenedWithLaunchOptionsInBackground(launchOptions, block: nil)
-        
-        
-        
+       
         return true
     }
 

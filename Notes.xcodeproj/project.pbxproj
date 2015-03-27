@@ -34,11 +34,7 @@
 		015AA23F1A9BC1C600479A7F /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015AA23E1A9BC1C600479A7F /* Accounts.framework */; };
 		015AA2411A9BC1CD00479A7F /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015AA2401A9BC1CD00479A7F /* Social.framework */; };
 		41070F1C1ABBEED300850EC3 /* BackgroundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */; };
-		41070F1E1ABC248600850EC3 /* ImageData.rdb in Resources */ = {isa = PBXBuildFile; fileRef = 41070F1D1ABC248600850EC3 /* ImageData.rdb */; };
-		41070F211ABC24D100850EC3 /* NSString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41070F1F1ABC24D100850EC3 /* NSString+Extension.swift */; };
-		41070F221ABC24D100850EC3 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41070F201ABC24D100850EC3 /* Database.swift */; };
 		41070F241ABC258600850EC3 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41070F231ABC258600850EC3 /* libsqlite3.0.dylib */; };
-		412BEBD41AB98ABB0012B714 /* setting-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 412BEBD31AB98ABB0012B714 /* setting-icon@2x.png */; };
 		412BEBD61AB98B810012B714 /* OptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412BEBD51AB98B810012B714 /* OptionViewController.swift */; };
 		412BEBD81AB9AD030012B714 /* AboutUsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */; };
 		41E61D461AB2FDF000001229 /* NotesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */; };
@@ -87,11 +83,7 @@
 		015AA23E1A9BC1C600479A7F /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		015AA2401A9BC1CD00479A7F /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundCell.swift; sourceTree = "<group>"; };
-		41070F1D1ABC248600850EC3 /* ImageData.rdb */ = {isa = PBXFileReference; lastKnownFileType = file; path = ImageData.rdb; sourceTree = "<group>"; };
-		41070F1F1ABC24D100850EC3 /* NSString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+Extension.swift"; sourceTree = "<group>"; };
-		41070F201ABC24D100850EC3 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		41070F231ABC258600850EC3 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
-		412BEBD31AB98ABB0012B714 /* setting-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "setting-icon@2x.png"; sourceTree = "<group>"; };
 		412BEBD51AB98B810012B714 /* OptionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionViewController.swift; sourceTree = "<group>"; };
 		412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutUsViewController.swift; sourceTree = "<group>"; };
 		41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesDetailViewController.swift; sourceTree = "<group>"; };
@@ -137,28 +129,10 @@
 		015AA1BB1A96BDAB00479A7F = {
 			isa = PBXGroup;
 			children = (
-				41070F231ABC258600850EC3 /* libsqlite3.0.dylib */,
-				015AA2401A9BC1CD00479A7F /* Social.framework */,
-				015AA23E1A9BC1C600479A7F /* Accounts.framework */,
-				015AA2071A96BFE600479A7F /* libsqlite3.dylib */,
-				015AA2051A96BFD300479A7F /* libz.dylib */,
-				015AA2031A96BFC600479A7F /* SystemConfiguration.framework */,
-				015AA2011A96BFBA00479A7F /* StoreKit.framework */,
-				015AA1FF1A96BFB000479A7F /* Security.framework */,
-				015AA1FD1A96BFA600479A7F /* QuartzCore.framework */,
-				015AA1FB1A96BF9C00479A7F /* MobileCoreServices.framework */,
-				015AA1F91A96BF9000479A7F /* CoreLocation.framework */,
-				015AA1F71A96BF8600479A7F /* CoreGraphics.framework */,
-				015AA1F51A96BF7A00479A7F /* CFNetwork.framework */,
-				015AA1F31A96BF6D00479A7F /* AudioToolbox.framework */,
-				015AA1E91A96BEC100479A7F /* Bolts.framework */,
-				015AA1EA1A96BEC100479A7F /* Parse.framework */,
-				015AA1EB1A96BEC100479A7F /* ParseCrashReporting.framework */,
-				015AA1EC1A96BEC100479A7F /* ParseFacebookUtils.framework */,
-				015AA1ED1A96BEC100479A7F /* ParseUI.framework */,
 				015AA1C61A96BDAB00479A7F /* Notes */,
 				015AA1DC1A96BDAB00479A7F /* NotesTests */,
 				015AA1C51A96BDAB00479A7F /* Products */,
+				412E5A011AC57B050068CA20 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -174,11 +148,6 @@
 		015AA1C61A96BDAB00479A7F /* Notes */ = {
 			isa = PBXGroup;
 			children = (
-				41070F1F1ABC24D100850EC3 /* NSString+Extension.swift */,
-				41070F201ABC24D100850EC3 /* Database.swift */,
-				41070F1D1ABC248600850EC3 /* ImageData.rdb */,
-				412BEBD31AB98ABB0012B714 /* setting-icon@2x.png */,
-				015AA2091A96C05300479A7F /* Bridging-Header.h */,
 				015AA1C91A96BDAB00479A7F /* AppDelegate.swift */,
 				015AA20A1A96C78400479A7F /* MasterTableViewController.swift */,
 				015AA20C1A96C7B700479A7F /* MasterTableViewCell.swift */,
@@ -186,11 +155,11 @@
 				41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */,
 				41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */,
 				412BEBD51AB98B810012B714 /* OptionViewController.swift */,
+				412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */,
+				015AA2091A96C05300479A7F /* Bridging-Header.h */,
 				015AA1CD1A96BDAB00479A7F /* Main.storyboard */,
-				015AA1D01A96BDAB00479A7F /* Images.xcassets */,
 				015AA1D21A96BDAB00479A7F /* LaunchScreen.xib */,
 				015AA1C71A96BDAB00479A7F /* Supporting Files */,
-				412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -198,6 +167,7 @@
 		015AA1C71A96BDAB00479A7F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				412E5A001AC57ABD0068CA20 /* Resources */,
 				015AA1C81A96BDAB00479A7F /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -218,6 +188,40 @@
 				015AA1DE1A96BDAB00479A7F /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		412E5A001AC57ABD0068CA20 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				015AA1D01A96BDAB00479A7F /* Images.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		412E5A011AC57B050068CA20 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				41070F231ABC258600850EC3 /* libsqlite3.0.dylib */,
+				015AA2401A9BC1CD00479A7F /* Social.framework */,
+				015AA23E1A9BC1C600479A7F /* Accounts.framework */,
+				015AA2071A96BFE600479A7F /* libsqlite3.dylib */,
+				015AA2051A96BFD300479A7F /* libz.dylib */,
+				015AA2031A96BFC600479A7F /* SystemConfiguration.framework */,
+				015AA2011A96BFBA00479A7F /* StoreKit.framework */,
+				015AA1FF1A96BFB000479A7F /* Security.framework */,
+				015AA1FD1A96BFA600479A7F /* QuartzCore.framework */,
+				015AA1FB1A96BF9C00479A7F /* MobileCoreServices.framework */,
+				015AA1F91A96BF9000479A7F /* CoreLocation.framework */,
+				015AA1F71A96BF8600479A7F /* CoreGraphics.framework */,
+				015AA1F51A96BF7A00479A7F /* CFNetwork.framework */,
+				015AA1F31A96BF6D00479A7F /* AudioToolbox.framework */,
+				015AA1E91A96BEC100479A7F /* Bolts.framework */,
+				015AA1EA1A96BEC100479A7F /* Parse.framework */,
+				015AA1EB1A96BEC100479A7F /* ParseCrashReporting.framework */,
+				015AA1EC1A96BEC100479A7F /* ParseFacebookUtils.framework */,
+				015AA1ED1A96BEC100479A7F /* ParseUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -300,9 +304,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				412BEBD41AB98ABB0012B714 /* setting-icon@2x.png in Resources */,
 				015AA1CF1A96BDAB00479A7F /* Main.storyboard in Resources */,
-				41070F1E1ABC248600850EC3 /* ImageData.rdb in Resources */,
 				015AA1D41A96BDAB00479A7F /* LaunchScreen.xib in Resources */,
 				015AA1D11A96BDAB00479A7F /* Images.xcassets in Resources */,
 			);
@@ -322,7 +324,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				41070F211ABC24D100850EC3 /* NSString+Extension.swift in Sources */,
 				015AA1CA1A96BDAB00479A7F /* AppDelegate.swift in Sources */,
 				015AA20D1A96C7B700479A7F /* MasterTableViewCell.swift in Sources */,
 				41E61D461AB2FDF000001229 /* NotesDetailViewController.swift in Sources */,
@@ -330,7 +331,6 @@
 				412BEBD81AB9AD030012B714 /* AboutUsViewController.swift in Sources */,
 				015AA20B1A96C78400479A7F /* MasterTableViewController.swift in Sources */,
 				412BEBD61AB98B810012B714 /* OptionViewController.swift in Sources */,
-				41070F221ABC24D100850EC3 /* Database.swift in Sources */,
 				41070F1C1ABBEED300850EC3 /* BackgroundCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
