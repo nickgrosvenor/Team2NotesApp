@@ -15,24 +15,14 @@ class NotesDetailViewController: UIViewController{
         var strdate: NSDate!
         var indexofNote:Int!
         var noteObjects: NSMutableArray! = NSMutableArray()
-    
+        var indexofDate:Int!
     // MARK:
     // MARK: UIVIewController LifeCycle Methods
     // MARK:
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
-        strdate = object["date"] as NSDate
-        if(object["isImage"] as Bool == true)
-        {
-            imgView.image =  object["image"] as? UIImage
-        }
-        else
-        {
-               imgView.image =  nil
-        }
-        self.lblTitleText.text = strTitle
+        indexofDate=0
         var swipeUP = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         swipeUP.direction = UISwipeGestureRecognizerDirection.Up
         self.view.addGestureRecognizer(swipeUP)
@@ -41,22 +31,56 @@ class NotesDetailViewController: UIViewController{
         self.view.addGestureRecognizer(swipeDown)
     }
     
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
         var dateFormatter = NSDateFormatter()
         var dateStr = object["date"] as? NSDate
         dateFormatter.dateFormat = "MMM dd,yyyy"
-        var DateInFormat = dateFormatter.stringFromDate(dateStr!)
+        var DateInFormat = dateFormatter.stringFromDate(strdate!)
         NSLog(DateInFormat)
         self.title = DateInFormat
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+        let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:strdate)
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        var currentDate:NSDate = calender.dateFromComponents(components)!
+        for object in self.noteObjects{
+            var dictData : NSMutableDictionary = object as NSMutableDictionary
+            
+            if(currentDate == dictData["date"] as NSDate)
+            {
+                var img:UIImage?
+                var imageFile : PFFile?  =  dictData["imageFile"] as? PFFile
+                if(imageFile != nil){
+                    imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                        img =  UIImage(data: data)
+                        self.imgView.image = img
+                    })
+              
+                }
+
+                self.strTitle = dictData["title"] as? String
+                lblTitleText.text = strTitle
+                break
+            }
+            else
+            {
+                imgView.image =  nil
+                lblTitleText.text = ""
+            }
+        }
+
 
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-           // self.fetchAllObjectsFromLocalDataStore()
-        //self.fetchAllObjects()
+        
+
+
     }
     
     // MARK:
@@ -141,26 +165,17 @@ class NotesDetailViewController: UIViewController{
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
            
             if(swipeGesture.direction == UISwipeGestureRecognizerDirection.Up){
-                if(indexofNote < self.noteObjects.count-1)
-                {
-                    self.indexofNote = self.indexofNote + 1
-                    var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
-                    if(object["isImage"] as Bool == true)
-                    {
-                        imgView.image =  object["image"] as? UIImage
-                    }
-                    else
-                    {
-                        imgView.image =  nil
-                    }
-                    // imgView.image =  object["image"] as? UIImage
-                    self.strTitle = object["title"] as? String
-                    lblTitleText.text = strTitle
-                     strdate = object["date"] as NSDate
+                
+                    self.indexofDate = self.indexofDate + 1
+                    var dayComponent:NSDateComponents = NSDateComponents()
+                    dayComponent.day = self.indexofDate
+                    var calender:NSCalendar = NSCalendar.currentCalendar()
+                    
+                    var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: strdate, options: NSCalendarOptions(0))!
                     var dateFormatter = NSDateFormatter()
-                    var dateStr = object["date"] as? NSDate
                     dateFormatter.dateFormat = "MMM dd,yyyy"
-                    var DateInFormat = dateFormatter.stringFromDate(dateStr!)
+                    var DateInFormat = dateFormatter.stringFromDate(dateToBeIncremented)
+                    
                     self.title = DateInFormat
                     var animation:CATransition = CATransition()
                     animation.duration = 0.4
@@ -168,42 +183,97 @@ class NotesDetailViewController: UIViewController{
                     animation.subtype = kCATransitionFromTop
                     animation.timingFunction = CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseInEaseOut)
                     (self.view.layer).addAnimation(animation, forKey: nil)
-                }
+                    let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:dateToBeIncremented)
+                    components.hour = 0
+                    components.minute = 0
+                    components.second = 0
+                    var currentDate:NSDate = calender.dateFromComponents(components)!
+                    for object in self.noteObjects{
+                        var dictData : NSMutableDictionary = object as NSMutableDictionary
+                        
+                        if(currentDate == dictData["date"] as NSDate)
+                        {
+                            var img:UIImage?
+                            var imageFile : PFFile?  =  dictData["imageFile"] as? PFFile
+                            if(imageFile != nil){
+                                imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                                    img =  UIImage(data: data)
+                                    self.imgView.image = img
+                                })
+                                
+                            }
+                                                else
+                                                {
+                                                    imgView.image =  nil
+                                                }
+                                                self.strTitle = dictData["title"] as? String
+                                                lblTitleText.text = strTitle
+                                                break
+                            }
+                        else
+                        {
+                                imgView.image =  nil
+                                lblTitleText.text = ""
+                        }
+                
+                    
+            }
                 
             }
             else if(swipeGesture.direction == UISwipeGestureRecognizerDirection.Down)
             {
-                if(indexofNote > 0)
-                {
-                    self.indexofNote = self.indexofNote - 1
+                    self.indexofDate = self.indexofDate - 1
+                    var dayComponent:NSDateComponents = NSDateComponents()
+                    dayComponent.day = self.indexofDate
+                    var calender:NSCalendar = NSCalendar.currentCalendar()
+                    var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: strdate, options: NSCalendarOptions(0))!
+                    var dateFormatter = NSDateFormatter()
+                    var dateStr = strdate
+                    dateFormatter.dateFormat = "MMM dd,yyyy"
+                    var DateInFormat = dateFormatter.stringFromDate(dateToBeIncremented)
+                    self.title = DateInFormat
                     var animation:CATransition = CATransition()
                     animation.duration = 0.4
                     animation.type = kCATransitionPush
                     animation.subtype = kCATransitionFromBottom
                     animation.timingFunction = CAMediaTimingFunction(name:kCAMediaTimingFunctionEaseInEaseOut)
                     (self.view.layer).addAnimation(animation, forKey: nil)
-                    var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexofNote) as NSMutableDictionary
-                    if(object["isImage"] as Bool == true)
+                    let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:dateToBeIncremented)
+                    components.hour = 0
+                    components.minute = 0
+                    components.second = 0
+                    var currentDate:NSDate = calender.dateFromComponents(components)!
+                for object in self.noteObjects{
+                    var dictData : NSMutableDictionary = object as NSMutableDictionary
+                    
+                    if(currentDate == dictData["date"] as NSDate)
                     {
-                        imgView.image =  object["image"] as? UIImage
+                        var img:UIImage?
+                        var imageFile : PFFile?  =  dictData["imageFile"] as? PFFile
+                        if(imageFile != nil){
+                            imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                                img =  UIImage(data: data)
+                                self.imgView.image = img
+                            })
+                            
+                        }                        else
+                        {
+                            imgView.image =  nil
+                        }
+                        self.strTitle = dictData["title"] as? String
+                        lblTitleText.text = strTitle
+                        break
                     }
                     else
                     {
                         imgView.image =  nil
+                        lblTitleText.text = ""
                     }
-                    imgView.image =  object["image"] as? UIImage
-                     strdate = object["date"] as NSDate
-                    self.strTitle = object["title"] as? String
-                    lblTitleText.text = strTitle
-                    var dateFormatter = NSDateFormatter()
-                    var dateStr = object["date"] as? NSDate
-                    dateFormatter.dateFormat = "MMM dd,yyyy"
-                    var DateInFormat = dateFormatter.stringFromDate(dateStr!)
-                    self.title = DateInFormat
+                }
+            
                 }
                
             }
         }
     }
   
-}

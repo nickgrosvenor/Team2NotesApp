@@ -177,8 +177,12 @@ class AddNoteTableViewController: UITableViewController,UIImagePickerControllerD
                     }
                     noteObject.setObject(self.titleField.text, forKey: "title")
                     noteObject.saveInBackgroundWithBlock({ (success, error) -> Void in
+                        if(success)
+                        {
+                            self.navigationController?.popToRootViewControllerAnimated(true)
+                        }
                     })
-                    self.navigationController?.popToRootViewControllerAnimated(true)
+                   
                 }
                 else
                 {

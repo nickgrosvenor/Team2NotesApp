@@ -4,16 +4,21 @@
 
 
 import UIKit
-class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate,UITableViewDataSource,UITableViewDelegate {
+class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate,UIScrollViewDelegate,InfiniteVerticalScrollViewDelegate,InfiniteVerticalScrollViewDataSource {
     
+    @IBOutlet weak var constraintScrollWidth: NSLayoutConstraint!
+    @IBOutlet weak var dateScrollView: InfiniteVerticalScrollView!
+    @IBOutlet weak var imageScrollView: InfiniteVerticalScrollView!
+    var date:NSDate?
     
-    @IBOutlet weak var tblNote: UITableView!
-    @IBOutlet weak var tblImage: UITableView!
+//    @IBOutlet weak var tblNote: UITableView!
+//    @IBOutlet weak var tblImage: UITableView!
     var noteObjects: NSMutableArray! = NSMutableArray()
     var sectionMonth: NSMutableArray! = NSMutableArray()
+
     var bgTblContentSize : Float = 0
-    
-    
+    var tblNoteYPos : Float = 0
+    var imgData: NSMutableArray! = NSMutableArray()
     
     // MARK:
     // MARK: ViewController LifeCycle Methods
@@ -21,30 +26,43 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if(self.date == nil)
+        {
+            self.date =  NSDate()
+        }
+      
+        constraintScrollWidth.constant = UIScreen.mainScreen().bounds.size.width
         self.title = "Timeline"
         let logo = UIImage(named: "uploadistLogo")
         let imageView = UIImageView(image:logo)
         self.navigationItem.titleView = imageView
         let button = UIButton(frame: CGRectMake(0, 0, 10, 10))
+        
     }
     
     override func viewWillAppear(animated: Bool) {
+      
         self.navigationController?.navigationBar.barTintColor = UIColor.whiteColor()
         self.navigationController?.navigationBar.tintColor = UIColor.blackColor()
         self.navigationController?.navigationBar.translucent = false;
-        self.tblNote .addObserver(self, forKeyPath: "contentSize", options: NSKeyValueObservingOptions.New, context: nil)
-        self.tblNote .addObserver(self, forKeyPath: "contentOffset", options: NSKeyValueObservingOptions.New, context: nil)
+       
+        self.dateScrollView.addObserver(self, forKeyPath: "contentSize", options: NSKeyValueObservingOptions.New, context: nil)
+        self.dateScrollView.addObserver(self, forKeyPath: "contentOffset", options: NSKeyValueObservingOptions.New, context: nil)
+       // dateScrollView.removeFromSuperview();
+        tblNoteYPos = Float(dateScrollView.contentOffset.y);
         
     }
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        self.tblNote.removeObserver(self, forKeyPath: "contentSize")
-        self.tblNote.removeObserver(self, forKeyPath: "contentOffset")
+        self.dateScrollView.removeObserver(self, forKeyPath: "contentSize")
+        self.dateScrollView.removeObserver(self, forKeyPath: "contentOffset")
     }
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        imgData = appDelegate.imgData
         if (PFUser.currentUser() == nil){
-            self.tblNote.reloadData()
             var logInViewController = PFLogInViewController()
             logInViewController.delegate = self
             var signUpViewController = PFSignUpViewController()
@@ -54,6 +72,8 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
         } else {
             self.fetchAllObjects()
         }
+        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -66,29 +86,30 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
     
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if(keyPath == "contentSize"){
-            tblImage.layoutIfNeeded()
-            tblNote.layoutIfNeeded()
-            self.tblImage.reloadData()
+            self.imageScrollView.layoutIfNeeded()
+            self.dateScrollView.layoutIfNeeded()
         }
         else if (keyPath == "contentOffset")
         {
-            tblImage.layoutIfNeeded()
-            tblNote.layoutIfNeeded()
-            NSLog("ContentSize For Front : width- %f - height - %f",Float(self.tblNote.contentSize.width),Float(self.tblNote.contentSize.height))
-            NSLog("ContentSize For Back : width- %f - height - %f",Float(self.tblImage.contentSize.width),Float(self.tblImage.contentSize.height))
-            var front : UITableView = object as UITableView;
-                    var frontTableHeight = Float(self.tblNote.contentSize.height)
-            var backTableHeight = Float(self.tblImage.contentSize.height)
-            
-            if frontTableHeight == 0 {
-                frontTableHeight = 1
+            if(object as UIScrollView == dateScrollView){
+                self.dateScrollView.layoutIfNeeded()
+                self.imageScrollView.layoutIfNeeded()
+                var front : UIScrollView = object as InfiniteVerticalScrollView;
+                        var frontTableHeight = Float(self.dateScrollView.contentSize.height)
+                var backTableHeight = Float(self.imageScrollView.contentSize.height)
+                
+                if frontTableHeight == 0 {
+                    frontTableHeight = 1
+                }
+                var fDiff : Float =  Float(dateScrollView.contentOffset.y) - tblNoteYPos
+                var view : UIView = imageScrollView.visibleLabels.objectAtIndex(0) as UIView
+                var vHeight : Float =  Float(view.frame.size.height)
+                var factor : Float = vHeight/150.0;
+                var imgContentOffset : CGPoint = imageScrollView.contentOffset
+                imgContentOffset.y = imgContentOffset.y + CGFloat(fDiff*factor)
+                imageScrollView.setContentOffset(imgContentOffset, animated: false)
+                tblNoteYPos = Float(dateScrollView.contentOffset.y);
             }
-            
-            var factor : Float = backTableHeight / frontTableHeight
-           
-            // this just ensures the backTable is scrolling together with the front table
-            var contentoffSetFront = CGPointMake(front.contentOffset.x, front.contentOffset.y * CGFloat(factor))
-            self.tblImage.contentOffset = contentoffSetFront;
         }
         
     }
@@ -104,8 +125,8 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
         query.whereKey("username", equalTo: PFUser.currentUser().username)
         query.orderByDescending("date")
         query.findObjectsInBackgroundWithBlock{ (objects, error) -> Void in
-            
             if (error == nil){
+               
                 var temp: NSArray = objects as NSArray
                 var arrnote = temp.mutableCopy() as NSMutableArray
                 var firstObj: PFObject = arrnote.objectAtIndex(0) as PFObject
@@ -120,12 +141,12 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
                 NSLog("no of days : %d",noofDays.day)
                 NSLog("no of month : %d",noofDays.month)
                 self.noteObjects = NSMutableArray()
-                for (var index = 0; index <= noofDays.day; ++index) {
+                for (var index = 0; index <= temp.count; ++index) {
+                    var obj = arrnote .objectAtIndex(index) as PFObject
                     var objNote = NSMutableDictionary()
-                    var cdate = NSDate()
+                    var cdate = obj["date"] as NSDate
                     var calender:NSCalendar = NSCalendar.currentCalendar()
                     let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:cdate)
-                    components.day -= index
                     components.hour = 0
                     components.minute = 0
                     components.second = 0
@@ -133,40 +154,33 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
                     objNote["date"] = currentDate as NSDate
                     var randomNumber = arc4random() % 25;
                     var img = UIImage(named: NSString(format: "img%d", randomNumber))
-                    objNote["image"] = img
-                    objNote["aspectFactor"] = Float(img!.size.width/img!.size.height)
-                    NSLog("%@",objNote)
-                    var fHeight : Float = (Float(self.view.frame.size.height) / Float(img!.size.width/img!.size.height))
-                    objNote["height"] = fHeight
+                    objNote["title"] = obj["title"] as? String
                     objNote["isImage"] = false
-                    self.bgTblContentSize += fHeight
-                    for object  in arrnote{
-                        var obj = object as PFObject
-                        if(obj["date"] as? NSDate == currentDate)
-                        {
-                            objNote["title"] = obj["title"] as? String
-                            var imageFile : AnyObject?  =  obj["image"]
-                            if(imageFile != nil)
-                            {
-                                imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
-                                    var imageBackground = UIImage(data: data)
-                                    objNote["image"] = imageBackground
-                                    objNote["aspectFactor"] = Float(imageBackground!.size.width/imageBackground!.size.height)
-                                    objNote["isImage"] = true
-                                    NSLog("%@",objNote)
-                                    
-                                    var fHeight : Float = (Float(self.view.frame.size.height) / Float(imageBackground!.size.width/imageBackground!.size.height))
-                                    objNote["height"] = fHeight
-                                    self.tblNote.reloadData()
-                                    
-                                })
-                            }
-                        }
-                        
+              
+                  
+                    var imageFile : AnyObject?  =  obj["image"]
+                    if(imageFile != nil)
+                    {
+                            objNote["imageFile"] = obj["image"]
+//                            imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
+//                            var imageBackground = UIImage(data: data)
+//                            objNote["image"] = imageBackground
+//                            objNote["aspectFactor"] = Float(imageBackground!.size.width/imageBackground!.size.height)
+//                            objNote["isImage"] = true
+//                            NSLog("%@",objNote)
+//                            var fHeight : Float = (Float(self.view.frame.size.height) / Float(imageBackground!.size.width/imageBackground!.size.height))
+//                            objNote["height"] = fHeight
+//                        
+//                            self.imageScrollView.reloadAllData()
+//                            
+//                        })
                     }
-                     self.noteObjects.addObject(objNote)
+
+                    self.noteObjects.addObject(objNote)
                 }
-                self.tblNote.reloadData()
+                self.imageScrollView.reloadAllData()
+                self.dateScrollView.reloadAllData()
+
                 if(noofDays.month > 0)
                 {
                     var arrNotes = NSMutableDictionary()
@@ -210,7 +224,6 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
             if (error == nil){
                 PFObject.pinAllInBackground(objects, block: nil)
                 self.fetchAllObjectsFromLocalDataStore()
-            
             } else {
                 println(error.userInfo)
             }
@@ -277,57 +290,300 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
         self.navigationController?.pushViewController(optionVC, animated: true)
     }
 
-    // MARK:
-    // MARK:  Table view data source
-    // MARK:
+  
     
-     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.noteObjects.count ;
+    //MARK
+    //MARK - UISCROLLVIEW DELEGATE
+    //MARK
+    
+    func numberOfRowsInScrollView(scrollView:InfiniteVerticalScrollView) -> NSInteger{
+             return 5 ;
     }
-
     
-     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
-        if(tableView.tag==0){
-        let cell = self.tblNote.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as MasterTableViewCell
-        var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
-        cell.masterTextLabel?.text = object["title"] as? String
-        var dateStr = object["date"] as? NSDate
-        var formatter:NSDateFormatter = NSDateFormatter()
-        formatter.dateFormat = "dd"
-        var formatter1:NSDateFormatter = NSDateFormatter()
-        formatter1.dateFormat = "EEEE"
-        cell.dateLabel?.text = formatter.stringFromDate(dateStr!)
-        cell.masterTitleLabel?.text = formatter1.stringFromDate(dateStr!)
-        var bgColorView = UIView()
-        bgColorView.backgroundColor = UIColor.clearColor()
-        cell.selectedBackgroundView = bgColorView
-        return cell
+    func scrollview(scrollV:InfiniteVerticalScrollView,didSelectRowAtIndex index:NSInteger) -> Void{
+        var dayComponent:NSDateComponents = NSDateComponents()
+        dayComponent.day = index
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+        var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+        let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:dateToBeIncremented)
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        var dictData : NSMutableDictionary = NSMutableDictionary()
+        var currentDate:NSDate = calender.dateFromComponents(components)!
+        var indexpath = -1
+        for(var i = 0 ; i < self.noteObjects.count ; i++ )
+        {
+              var object: NSDictionary = self.noteObjects.objectAtIndex(i) as NSDictionary
+              var dictData : NSDictionary = object as NSDictionary
+                if(currentDate == dictData["date"] as NSDate)
+                {
+                    indexpath = i;
+                }
+        }
+        
+        var addNote: NotesDetailViewController = self.storyboard?.instantiateViewControllerWithIdentifier("NotesDetailViewController") as NotesDetailViewController
+        addNote.strdate = dateToBeIncremented
+        addNote.noteObjects = self.noteObjects
+        if(indexpath == -1)
+        {
+            addNote.indexofNote = 0
         }
         else
         {
-            var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
-            let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as BackgroundCell
-            cell.imgView.image = object["image"] as? UIImage
-            return cell
-
+             var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexpath) as NSMutableDictionary
+            addNote.indexofNote = indexpath
         }
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
-        var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
-        var addNote: NotesDetailViewController = self.storyboard?.instantiateViewControllerWithIdentifier("NotesDetailViewController") as NotesDetailViewController
-        addNote.strTitle = object["title"] as? String
-        addNote.indexofNote = indexPath.row
-        addNote.noteObjects = self.noteObjects
+        addNote.strTitle = dictData["title"] as? String
         self.navigationController?.pushViewController(addNote, animated: true)
-    }
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat{
-        if(tableView.tag != 0){
-            var object: NSMutableDictionary = self.noteObjects.objectAtIndex(indexPath.row) as NSMutableDictionary
-            var fHeight : Float = object["height"] as Float
-            return CGFloat(fHeight)
-        }
-        return 150.0
+
     }
     
+    func scrollview(scrollV:InfiniteVerticalScrollView,viewForRowAtIndex index:NSInteger) -> UIView{
+        if(scrollV.tag==0){
+            var flagisNotes = false
+           
+            var viewContainer: ContainerView = UIView.loadView("containerView") as ContainerView
+            viewContainer.frame = CGRectMake(0, 0, scrollV.frame.size.width, viewContainer.frame.size.height)
+            viewContainer.dateLabel.text = self.displaydate(index)
+            viewContainer.masterTitleLabel.text = self.displayMonth(index)
+            viewContainer.masterTextLabel.text = self.displayNote(index)
+            return viewContainer;
+        }
+        else
+        {
+            var viewContainer: ImageContainerView = UIView.loadView("imageContainerView") as ImageContainerView
+//            var cdate = self.date
+//            var flagisImage = false
+//
+//            
+//            var iPageIndex : NSInteger = 0
+//            if(dateScrollView.visibleLabels?.count > 0){
+//                var lastView : UIView = dateScrollView.visibleLabels.objectAtIndex(0) as UIView;
+//                iPageIndex = lastView.tag;
+//                NSLog("Index : %d", iPageIndex)
+//            }
+//            var dayComponent:NSDateComponents = NSDateComponents()
+//            dayComponent.day = iPageIndex
+//            dayComponent.hour = 0
+//            dayComponent.minute = 0
+//            dayComponent.second = 0
+//            
+//            var calender:NSCalendar = NSCalendar.currentCalendar()
+//            var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+//            
+//            let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:dateToBeIncremented)
+//            components.hour = 0
+//            components.minute = 0
+//            components.second = 0
+//            var currentDate:NSDate = calender.dateFromComponents(components)!
+//            
+//            var object:NSDictionary = NSDictionary()
+//            var img:UIImage = UIImage()
+//
+//            
+//            var predeicate : NSPredicate = NSPredicate(format: "self.date = %@",currentDate)!
+//            var filterArray : NSArray = self.noteObjects.filteredArrayUsingPredicate(predeicate)
+//            
+//            if(filterArray.count > 0){
+//                var timestamp = currentDate.timeIntervalSince1970
+//                var imgDict : NSMutableDictionary = filterArray.objectAtIndex(0) as NSMutableDictionary
+//                
+//                var imageFile : AnyObject?  =  imgDict["imageFile"]
+//                
+//                var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as String
+//                var imagePath = paths.stringByAppendingPathComponent(NSString(format: "%ld%ld%ld.png",components.year,components.month,components.day))
+//                var checkImage = NSFileManager.defaultManager()
+//                var imageBackground:UIImage?
+//                
+//                if (checkImage.fileExistsAtPath(imagePath)) {
+//                    
+//                    let getImage = UIImage(contentsOfFile: imagePath)
+//                    viewContainer.imgView.image = getImage
+//                    
+//                } else{
+//                viewContainer.tag = iPageIndex
+//                imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
+//                    
+//                    var dayComponent:NSDateComponents = NSDateComponents()
+//                    dayComponent.day = viewContainer.tag
+//                    dayComponent.hour = 0
+//                    dayComponent.minute = 0
+//                    dayComponent.second = 0
+//                    
+//                    var calender:NSCalendar = NSCalendar.currentCalendar()
+//                    var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+//                    
+//                    let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:dateToBeIncremented)
+//                    components.hour = 0
+//                    components.minute = 0
+//                    components.second = 0
+//                    var currentDate:NSDate = calender.dateFromComponents(components)!
+//                    var timestamp = currentDate.timeIntervalSince1970
+//                    
+//                    var imagePath = paths.stringByAppendingPathComponent(NSString(format: "%ld%ld%ld.png",components.year,components.month,components.day))
+//                    data.writeToFile(imagePath, atomically: true)
+//                    imageBackground   = UIImage(data: data)!
+//                    viewContainer.imgView.image = imageBackground
+//                    
+//                    let sizeOfImage = imageBackground!.size
+//                    var aspectFactor = Float(sizeOfImage.width / sizeOfImage.height)
+//                    var fHeight : CGFloat = CGFloat((Float(self.view.frame.size.height) / Float(sizeOfImage.width / sizeOfImage.height)))
+//                    viewContainer.imgView.frame = CGRectMake(0, 0, scrollV.frame.size.width, fHeight)
+//                    viewContainer.frame = CGRectMake(0, 0, scrollV.frame.size.width, fHeight)
+//                    
+//                    
+//                })
+//                }
+//                
+////                img =  UIImage(named: NSString(format: "img%d", 1))!
+////                viewContainer.imgView.image = img
+////                var aspectFactor = Float(img.size.width/img.size.height)
+////                var fHeight : CGFloat = CGFloat((Float(self.view.frame.size.height) / Float(img.size.width/img.size.height)))
+////                viewContainer.imgView.frame = CGRectMake(0, 0, scrollV.frame.size.width, fHeight)
+////                viewContainer.frame = CGRectMake(0, 0, scrollV.frame.size.width, fHeight)
+//                
+//                var obj = NSMutableDictionary()
+//                obj["index"] = index as NSInteger
+//                if(imageBackground != nil){
+//                    obj["image"] = imageBackground
+//                }
+//                imgData.addObject(obj)
+//                
+//            }
+//            else{
+                var randomNumber = arc4random() % 25;
+               var img  =  UIImage(named: NSString(format: "img%d", randomNumber))!
+                var obj = NSMutableDictionary()
+                obj["index"] = index as NSInteger
+                obj["image"] = NSString(format:"img%d", randomNumber);
+                imgData .addObject(obj)
+                viewContainer.imgView.image = img
+                
+                var aspectFactor = Float(img.size.width/img.size.height)
+                var fHeight : CGFloat = CGFloat((Float(self.view.frame.size.height) / Float(img.size.width/img.size.height)))
+                viewContainer.imgView.frame = CGRectMake(0, 0, scrollV.frame.size.width, fHeight)
+                viewContainer.frame = CGRectMake(0, 0, scrollV.frame.size.width, fHeight)
+            //}
+      
+            return viewContainer
+        }
+    }
+    
+    func heightForScrollView(scrollView:InfiniteVerticalScrollView) -> CGFloat{
+        if scrollView.tag == 1 {
+            return 1070.28;
+        }
+        return 150;
+    }
+    
+    
+    func displaydate(row:NSInteger) ->NSString{
+        var dayComponent:NSDateComponents = NSDateComponents()
+        dayComponent.day = row
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+       
+        var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+        
+        var dateformat : NSDateFormatter = NSDateFormatter()
+        dateformat.dateFormat = "dd"
+        
+        var datestr:NSString = dateformat.stringFromDate(dateToBeIncremented)
+        return datestr
+    }
+    func displayMonth(row:NSInteger) ->NSString{
+        var dayComponent:NSDateComponents = NSDateComponents()
+        dayComponent.day = row
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+        var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+        
+        var dateformat : NSDateFormatter = NSDateFormatter()
+        dateformat.dateFormat = "EEEE"
+        
+        var datestr:NSString = dateformat.stringFromDate(dateToBeIncremented)
+        return datestr
+    }
+    func displayNote(row:NSInteger) ->NSString{
+        var dayComponent:NSDateComponents = NSDateComponents()
+        dayComponent.day = row
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+        var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+        let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:dateToBeIncremented)
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        var currentDate:NSDate = calender.dateFromComponents(components)!
+        for object in self.noteObjects{
+            var dictData : NSMutableDictionary = object as NSMutableDictionary
+            
+            if(currentDate == dictData["date"] as NSDate)
+            {
+               
+              return object["title"] as NSString
+            }
+        }
+        return ""
+        
+        
+    }
+    func displayImage(row:NSInteger) ->UIImage{
+        for object in self.imgData{
+            if(object["index"] as NSInteger == row){
+                return object["image"] as UIImage
+            }
+        }
+        
+        var flagimage = false;
+        var dayComponent:NSDateComponents = NSDateComponents()
+        dayComponent.day = row
+        
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+        var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+        let components = calender.components((NSCalendarUnit.CalendarUnitHour|NSCalendarUnit.CalendarUnitMinute|NSCalendarUnit.CalendarUnitSecond|NSCalendarUnit.CalendarUnitDay|NSCalendarUnit.CalendarUnitMonth|NSCalendarUnit.CalendarUnitYear), fromDate:dateToBeIncremented)
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        var currentDate:NSDate = calender.dateFromComponents(components)!
+        var img:UIImage = UIImage()
+        for object in self.noteObjects{
+            var dictData : NSMutableDictionary = object as NSMutableDictionary
+            
+            if(currentDate == dictData["date"] as NSDate)
+                {
+                    var imageFile : AnyObject?  =  dictData["imageFile"]
+                    var imageBackground:UIImage?
+                    imageFile?.getDataInBackgroundWithBlock({ (data, error) -> Void in
+                                                   imageBackground   = UIImage(data: data)!
+                })
+                    flagimage = false
+                    var obj = NSMutableDictionary()
+                    obj["index"] = row as NSInteger
+                    obj["image"] = imageBackground
+                    imgData .addObject(obj)
+                    return imageBackground!
+            }
+        }
+        if(flagimage == false){
+            var randomNumber = arc4random() % 25;
+            img =  UIImage(named: NSString(format: "img%d", randomNumber))!
+            var obj = NSMutableDictionary()
+            obj["index"] = row as NSInteger
+            obj["image"] = img as UIImage
+            imgData .addObject(obj)
+        }
+        
+        return img
+        
+    }
+    func getDate(row:NSInteger) ->NSDate{
+        var dayComponent:NSDateComponents = NSDateComponents()
+        dayComponent.day = row
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+        
+        var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+        return dateToBeIncremented
+    }
+    
+
 }
+

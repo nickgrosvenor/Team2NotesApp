@@ -35,9 +35,16 @@
 		015AA2411A9BC1CD00479A7F /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015AA2401A9BC1CD00479A7F /* Social.framework */; };
 		41070F1C1ABBEED300850EC3 /* BackgroundCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */; };
 		41070F241ABC258600850EC3 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41070F231ABC258600850EC3 /* libsqlite3.0.dylib */; };
+		4127B32F1ACE58990079FD77 /* imageContainerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4127B32E1ACE58990079FD77 /* imageContainerView.xib */; };
+		4127B3311ACE58D90079FD77 /* ImageContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4127B3301ACE58D90079FD77 /* ImageContainerView.swift */; };
 		412BEBD61AB98B810012B714 /* OptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412BEBD51AB98B810012B714 /* OptionViewController.swift */; };
 		412BEBD81AB9AD030012B714 /* AboutUsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */; };
 		41E61D461AB2FDF000001229 /* NotesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */; };
+		41EC24ED1ACD3AE5003E7137 /* UIView+NIB.m in Sources */ = {isa = PBXBuildFile; fileRef = 41EC24E81ACD3AE5003E7137 /* UIView+NIB.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		41EC24EE1ACD3AE5003E7137 /* CLTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 41EC24EA1ACD3AE5003E7137 /* CLTableView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		41EC24EF1ACD3AE5003E7137 /* InfiniteVerticalScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 41EC24EC1ACD3AE5003E7137 /* InfiniteVerticalScrollView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		41EC24F21ACD3B36003E7137 /* ContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EC24F01ACD3B36003E7137 /* ContainerView.swift */; };
+		41EC24F31ACD3B36003E7137 /* containerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41EC24F11ACD3B36003E7137 /* containerView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,9 +91,19 @@
 		015AA2401A9BC1CD00479A7F /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		41070F1B1ABBEED300850EC3 /* BackgroundCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundCell.swift; sourceTree = "<group>"; };
 		41070F231ABC258600850EC3 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		4127B32E1ACE58990079FD77 /* imageContainerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = imageContainerView.xib; sourceTree = "<group>"; };
+		4127B3301ACE58D90079FD77 /* ImageContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageContainerView.swift; sourceTree = "<group>"; };
 		412BEBD51AB98B810012B714 /* OptionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionViewController.swift; sourceTree = "<group>"; };
 		412BEBD71AB9AD030012B714 /* AboutUsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutUsViewController.swift; sourceTree = "<group>"; };
 		41E61D451AB2FDF000001229 /* NotesDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesDetailViewController.swift; sourceTree = "<group>"; };
+		41EC24E71ACD3AE5003E7137 /* UIView+NIB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+NIB.h"; sourceTree = "<group>"; };
+		41EC24E81ACD3AE5003E7137 /* UIView+NIB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+NIB.m"; sourceTree = "<group>"; };
+		41EC24E91ACD3AE5003E7137 /* CLTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLTableView.h; sourceTree = "<group>"; };
+		41EC24EA1ACD3AE5003E7137 /* CLTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLTableView.m; sourceTree = "<group>"; };
+		41EC24EB1ACD3AE5003E7137 /* InfiniteVerticalScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfiniteVerticalScrollView.h; sourceTree = "<group>"; };
+		41EC24EC1ACD3AE5003E7137 /* InfiniteVerticalScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfiniteVerticalScrollView.m; sourceTree = "<group>"; };
+		41EC24F01ACD3B36003E7137 /* ContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerView.swift; sourceTree = "<group>"; };
+		41EC24F11ACD3B36003E7137 /* containerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = containerView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,8 +184,18 @@
 		015AA1C71A96BDAB00479A7F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				41EC24F01ACD3B36003E7137 /* ContainerView.swift */,
+				41EC24F11ACD3B36003E7137 /* containerView.xib */,
+				41EC24E71ACD3AE5003E7137 /* UIView+NIB.h */,
+				41EC24E81ACD3AE5003E7137 /* UIView+NIB.m */,
+				41EC24E91ACD3AE5003E7137 /* CLTableView.h */,
+				41EC24EA1ACD3AE5003E7137 /* CLTableView.m */,
+				41EC24EB1ACD3AE5003E7137 /* InfiniteVerticalScrollView.h */,
+				41EC24EC1ACD3AE5003E7137 /* InfiniteVerticalScrollView.m */,
 				412E5A001AC57ABD0068CA20 /* Resources */,
 				015AA1C81A96BDAB00479A7F /* Info.plist */,
+				4127B32E1ACE58990079FD77 /* imageContainerView.xib */,
+				4127B3301ACE58D90079FD77 /* ImageContainerView.swift */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -304,8 +331,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41EC24F31ACD3B36003E7137 /* containerView.xib in Resources */,
 				015AA1CF1A96BDAB00479A7F /* Main.storyboard in Resources */,
 				015AA1D41A96BDAB00479A7F /* LaunchScreen.xib in Resources */,
+				4127B32F1ACE58990079FD77 /* imageContainerView.xib in Resources */,
 				015AA1D11A96BDAB00479A7F /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,8 +358,13 @@
 				41E61D461AB2FDF000001229 /* NotesDetailViewController.swift in Sources */,
 				015AA20F1A96C89A00479A7F /* AddNoteTableViewController.swift in Sources */,
 				412BEBD81AB9AD030012B714 /* AboutUsViewController.swift in Sources */,
+				41EC24ED1ACD3AE5003E7137 /* UIView+NIB.m in Sources */,
 				015AA20B1A96C78400479A7F /* MasterTableViewController.swift in Sources */,
 				412BEBD61AB98B810012B714 /* OptionViewController.swift in Sources */,
+				41EC24F21ACD3B36003E7137 /* ContainerView.swift in Sources */,
+				41EC24EF1ACD3AE5003E7137 /* InfiniteVerticalScrollView.m in Sources */,
+				4127B3311ACE58D90079FD77 /* ImageContainerView.swift in Sources */,
+				41EC24EE1ACD3AE5003E7137 /* CLTableView.m in Sources */,
 				41070F1C1ABBEED300850EC3 /* BackgroundCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

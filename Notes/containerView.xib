@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ContainerView" customModule="Notes" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="150"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view alpha="0.30000001192092896" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zHy-rh-n8B">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="149"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="idb-QX-DZn">
+                    <rect key="frame" x="23" y="43" width="75" height="41"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-UltraLight" family="Helvetica Neue" pointSize="35"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="15z-cq-CeL">
+                    <rect key="frame" x="552" y="67" width="40" height="80"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VRr-mO-3AL">
+                    <rect key="frame" x="552" y="32" width="40" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="ezu-ix-rhb"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="15z-cq-CeL" firstAttribute="top" secondItem="VRr-mO-3AL" secondAttribute="bottom" constant="14" id="84z-q3-ldV"/>
+                <constraint firstItem="VRr-mO-3AL" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="32" id="A4v-0a-DSd"/>
+                <constraint firstItem="zHy-rh-n8B" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Cqt-37-ckQ"/>
+                <constraint firstAttribute="trailing" secondItem="zHy-rh-n8B" secondAttribute="trailing" id="JF1-aj-vRr"/>
+                <constraint firstItem="zHy-rh-n8B" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Jkx-lg-JKU"/>
+                <constraint firstItem="idb-QX-DZn" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" priority="900" constant="23" id="KNj-zo-mvm"/>
+                <constraint firstItem="15z-cq-CeL" firstAttribute="leading" secondItem="VRr-mO-3AL" secondAttribute="leading" id="TWr-2X-iqS"/>
+                <constraint firstItem="15z-cq-CeL" firstAttribute="trailing" secondItem="VRr-mO-3AL" secondAttribute="trailing" id="WVa-qa-9HU"/>
+                <constraint firstItem="15z-cq-CeL" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="idb-QX-DZn" secondAttribute="trailing" constant="5" id="Zvk-Ij-oHH"/>
+                <constraint firstAttribute="bottom" secondItem="zHy-rh-n8B" secondAttribute="bottom" constant="1" id="bDD-cA-Tdb"/>
+                <constraint firstAttribute="bottom" secondItem="15z-cq-CeL" secondAttribute="bottom" constant="3" id="owG-El-d7p"/>
+                <constraint firstAttribute="trailing" secondItem="VRr-mO-3AL" secondAttribute="trailing" constant="8" id="rBS-U4-QUP"/>
+                <constraint firstItem="idb-QX-DZn" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="43" id="zWB-hQ-Kxl"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="dateLabel" destination="idb-QX-DZn" id="0Gt-G8-lNl"/>
+                <outlet property="masterTextLabel" destination="15z-cq-CeL" id="kuV-WI-d14"/>
+                <outlet property="masterTitleLabel" destination="VRr-mO-3AL" id="lkl-8D-5Ti"/>
+            </connections>
+        </view>
+    </objects>
+</document>
