@@ -346,6 +346,7 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
             var viewContainer: ContainerView = UIView.loadView("containerView") as ContainerView
             viewContainer.frame = CGRectMake(0, 0, scrollV.frame.size.width, viewContainer.frame.size.height)
             viewContainer.dateLabel.text = self.displaydate(index)
+            viewContainer.monthLabel.text = self.displayMonthLabel(index)
             viewContainer.masterTitleLabel.text = self.displayMonth(index)
             viewContainer.masterTextLabel.text = self.displayNote(index)
             return viewContainer;
@@ -491,6 +492,20 @@ class MasterTableViewController: UIViewController, PFLogInViewControllerDelegate
         var datestr:NSString = dateformat.stringFromDate(dateToBeIncremented)
         return datestr
     }
+    func displayMonthLabel(row:NSInteger) ->NSString{
+        var dayComponent:NSDateComponents = NSDateComponents()
+        dayComponent.day = row
+        var calender:NSCalendar = NSCalendar.currentCalendar()
+        
+        var dateToBeIncremented: NSDate = calender.dateByAddingComponents(dayComponent, toDate: self.date!, options: NSCalendarOptions(0))!
+        
+        var dateformat : NSDateFormatter = NSDateFormatter()
+        dateformat.dateFormat = "MMM-yyyy"
+        
+        var datestr:NSString = dateformat.stringFromDate(dateToBeIncremented)
+        return datestr
+    }
+
     func displayMonth(row:NSInteger) ->NSString{
         var dayComponent:NSDateComponents = NSDateComponents()
         dayComponent.day = row

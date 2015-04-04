@@ -26,6 +26,12 @@
                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4FB-Du-Gyc">
+                    <rect key="frame" x="23" y="100" width="54" height="29"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-UltraLight" family="Helvetica Neue" pointSize="25"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VRr-mO-3AL">
                     <rect key="frame" x="552" y="32" width="40" height="21"/>
                     <constraints>
@@ -38,6 +44,8 @@
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="4FB-Du-Gyc" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="23" id="1fa-P0-qcv"/>
+                <constraint firstAttribute="bottom" secondItem="4FB-Du-Gyc" secondAttribute="bottom" constant="21" id="6AG-Hm-R9I"/>
                 <constraint firstItem="15z-cq-CeL" firstAttribute="top" secondItem="VRr-mO-3AL" secondAttribute="bottom" constant="14" id="84z-q3-ldV"/>
                 <constraint firstItem="VRr-mO-3AL" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="32" id="A4v-0a-DSd"/>
                 <constraint firstItem="zHy-rh-n8B" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Cqt-37-ckQ"/>
@@ -57,6 +65,7 @@
                 <outlet property="dateLabel" destination="idb-QX-DZn" id="0Gt-G8-lNl"/>
                 <outlet property="masterTextLabel" destination="15z-cq-CeL" id="kuV-WI-d14"/>
                 <outlet property="masterTitleLabel" destination="VRr-mO-3AL" id="lkl-8D-5Ti"/>
+                <outlet property="monthLabel" destination="4FB-Du-Gyc" id="Dl7-oC-Boy"/>
             </connections>
         </view>
     </objects>
